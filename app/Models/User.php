@@ -3,14 +3,24 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 
-class User extends Authenticatable
+/**
+ * @method static pluck(string $string)
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +30,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'birthday',
+        'phone',
+        'gender_id',
         'password',
+        'myself',
     ];
 
     /**
@@ -41,4 +55,112 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public static function add($fields)
+    {
+        $user = new static();
+        $user->fill($fields);
+        $user->password = bcrypt($fields['password']);
+        $user->save();
+
+        return $user;
+    }
+
+    public function edit($fields)
+    {
+        $this->fill($fields);
+        $this->save();
+    }
+
+    public function generatePassword($password)
+    {
+        if ($password != null) {
+            $this->password = bcrypt($password);
+            $this->save();
+        }
+    }
+
+    public function remove()
+    {
+        $this->delete();
+    }
+
+    public function uploadAvatar($image)
+    {
+        if ($image != null) {
+            Storage::delete('uploads/'.$this->image);
+            $fileName = Str::random(10).'.'.$image->extension();
+            $image->storeAs('uploads', $fileName);
+            $this->avatar = $fileName;
+            $this->save();
+        } else {
+            return;
+        }
+    }
+
+    public function getAvatar()
+    {
+        if ($this->avatar == null) {
+            return '/uploads/no-user-image.png';
+        }
+
+        return '/uploads/'.$this->avatar;
+    }
+
+    public function makeAdmin()
+    {
+        $this->is_admin = 1;
+        $this->save();
+    }
+
+    public function makeNormal()
+    {
+        $this->is_admin = 0;
+        $this->save();
+    }
+
+    public function toggleAdmin($value)
+    {
+        if ($value == null) {
+            return $this->makeNormal();
+        }
+
+        return $this->makeAdmin();
+    }
+
+    public function ban()
+    {
+        $this->status = 0;
+        $this->save();
+    }
+
+    public function unban()
+    {
+        $this->status = 1;
+        $this->save();
+    }
+
+    public function toggleBan($value)
+    {
+        if ($value == 0) {
+            return $this->unban();
+        }
+
+        return $this->ban();
+    }
 }

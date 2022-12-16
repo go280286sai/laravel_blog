@@ -2,66 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
-    public function edit(Request $request)
+    public function index()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+
+        return view('pages.profile', ['user' => $user]);
     }
 
-    /**
-     * Update the user's profile information.
-     *
-     * @param  \App\Http\Requests\ProfileUpdateRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(ProfileUpdateRequest $request)
+    public function store(Request $request)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy(Request $request)
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current-password'],
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore(Auth::user()->id),
+            ],
+            'avatar' => 'nullable|image',
         ]);
 
-        $user = $request->user();
+        $user = Auth::user();
 
-        Auth::logout();
+        $user->edit($request->all());
+        $user->generatePassword($request->get('password'));
+        $user->uploadAvatar($request->file('avatar'));
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect()->back()->with('status', 'Профиль успешно обновлен');
     }
 }
