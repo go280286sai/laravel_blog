@@ -1,47 +1,76 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layout')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('style')
+    <!-- common css -->
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/bootstrap.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/font-awesome.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/animate.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.carousel.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.theme.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.transitions.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
+@endsection
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+@section('text')
+    <div class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="leave-comment mr0">
+                        <!--leave comment-->
+                        @if(session('status'))
+                            <div class="alert alert-danger">
+                                {{session('status')}}
+                            </div>
+                        @endif
+                        <h3 class="text-uppercase">{{ __('messages.login') }}</h3>
+                        @include('admin.errors')
+                        <br>
+                        <form class="form-horizontal contact-form" role="form" method="post" action="{{ route('login') }}">
+                            {{csrf_field()}}
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="email"></label><input type="text" class="form-control" id="email" name="email" value="{{old('email')}}"
+                                                                      placeholder="{{ __('messages.email') }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="password"></label><input type="password" class="form-control" id="password" name="password"
+                                                                         placeholder="{{ __('messages.password') }}">
+                                </div>
+                            </div>
+                            <div class="block mt-4">
+                                <label for="remember_me" class="inline-flex items-center">
+                                    <input id="remember_me" type="checkbox"  name="remember">
+                                    <span class="ml-2 text-sm text-gray-600">{{ __('messages.remember_me') }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                @if (Route::has('password.request'))
+                                    <a href="{{ route('password.request') }}">
+                                        {{ __('messages.forgot_your_password') }}
+                                    </a>
+                                @endif
+                                    <button type="submit" class="btn send-btn">{{__('messages.login')}}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!--end leave comment-->
+                </div>
+                @include('pages._sidebar')
+            </div>
         </div>
+    </div>
+@endsection
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ml-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+@section('js')
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/bootstrap.min.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/owl.carousel.min.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery.stickit.min.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/map.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
+    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
+@endsection

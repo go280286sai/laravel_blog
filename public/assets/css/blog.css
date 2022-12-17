@@ -1,0 +1,17 @@
+.red{
+    color: red;
+}
+.block_views{
+    background-color: #4b646f;
+    padding-left: 5px;
+    color: white;
+}
+.social{
+    padding: 20px;
+}
+.social_item{
+    margin-left: 10px;
+}
+.item:hover {
+    font-size:30px;
+}
