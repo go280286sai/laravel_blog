@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -22,22 +22,26 @@ class ProfileController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param ProfileRequest $request
      * @return RedirectResponse
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ProfileRequest $request): RedirectResponse
     {
-        $this->validate($request, [
-            'avatar' => 'nullable|image',
-        ]);
 
         $user = Auth::user();
-        $user->edit($request->all());
-        $user->generatePassword($request->get('password'));
+        $user->name = $request->get('name');
+        $user->birthday = $request->get('birthday') ?? null;
+        $user->phone = $request->get('phone') ?? null;
+        $user->gender_id = $request->get('gender_id') ?? null;
+        $user->myself = $request->get('myself') ?? null;
+        if (!empty($request->get('password'))) {
+            $user->password = bcrypt($request->get('password'));
+        }
         $user->uploadAvatar($request->file('avatar'));
+        $user->save();
 
-        return redirect()->back()->with('status', 'Профиль успешно обновлен');
+        return redirect()->back()->with('status', __('admin.update_profile'));
     }
 }

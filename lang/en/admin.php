@@ -84,5 +84,6 @@ return [
     'offline' => 'Offline',
     'create_date' => 'Create date',
     'delete' => 'Delete',
+    'update_profile'=>'Профиль успешно обновлен'
 
 ];

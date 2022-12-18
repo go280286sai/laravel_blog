@@ -33,8 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'birthday',
         'phone',
         'gender_id',
-        'password',
         'myself',
+        'password'
     ];
 
     /**
@@ -74,7 +74,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function add($fields)
     {
         $user = new static();
-        $user->fill($fields);
+        $user->name = $fields['name'];
+        $user->email = $fields['email'];
         $user->password = bcrypt($fields['password']);
         $user->save();
 

@@ -89,7 +89,7 @@
                             <!-- checkbox -->
                             <div class="form-group">
                                 <label>
-                                    <input type="checkbox" class="minimal" name="status" checked  value="0" {{\Illuminate\Support\Facades\Auth::user()->email_verified_at??'disabled'}}>
+                                    <input type="checkbox" class="minimal" name="status" checked  value="1" {{\Illuminate\Support\Facades\Auth::user()->email_verified_at??'disabled'}}>
                                 </label>
                                 <label>
                                     {{__('admin.draft')}}

@@ -129,7 +129,7 @@
                                     </td>
                                     <td>{!! $post->comment??'' !!}</td>
                                 @endif
-                                <td>{!! $post->status==1?'<font color="green">active</font>':'<font color="red">dev</font>'!!}
+                                <td>{!! $post->status==1?'<font class="green" >active</font>':'<font class="red">dev</font>'!!}
                                     @if($post->status == 1)
                                         <form action="/admin/posts/toggle/{{$post->id}}" method="get">
                                             <button type="submit" >
