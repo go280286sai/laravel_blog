@@ -47,13 +47,13 @@
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="{{'/uploads/'.$admin->avatar}}" class="user-image" alt="">
+                            <img src="{{'/uploads/users/'.$admin->avatar}}" class="user-image" alt="">
                             <span class="hidden-xs">{{$admin->name}}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header">
-                                <img src="{{'/uploads/'.$admin->avatar}}" class="img-circle" alt="{{$admin->name}}">
+                                <img src="{{'/uploads/users/'.$admin->avatar}}" class="img-circle" alt="{{$admin->name}}">
                                 <p>
                                     {{$admin->name}}
                                 </p>
@@ -86,7 +86,7 @@
             <!-- Sidebar user panel -->
             <div class="user-panel">
                 <div class="pull-left image">
-                    <img src="{{'/uploads/'.$admin->avatar}}" class="img-circle" alt="">
+                    <img src="{{'/uploads/users/'.$admin->avatar}}" class="img-circle" alt="">
 
                 </div>
                 <div class="pull-left info">

@@ -89,7 +89,7 @@
                             <!-- checkbox -->
                             <div class="form-group">
                                 <label>
-                                    <input type="checkbox" class="minimal" name="status" checked  {{\Illuminate\Support\Facades\Auth::user()->email_verified_at??'disabled'}}>
+                                    <input type="checkbox" class="minimal" name="status" checked  value="0" {{\Illuminate\Support\Facades\Auth::user()->email_verified_at??'disabled'}}>
                                 </label>
                                 <label>
                                     {{__('admin.draft')}}
@@ -113,7 +113,7 @@
                     <!-- /.box-body -->
                     <div class="box-footer">
                         <button class="btn btn-default" onclick="window.history.back()"> {{__('admin.back')}}</button>
-                        <button class="btn btn-warning pull-right"> {{__('admin.edit')}}</button>
+                        <button class="btn btn-warning pull-right"> {{__('admin.add')}}</button>
                     </div>
                 </form>       <!-- /.box-footer-->
             </div>

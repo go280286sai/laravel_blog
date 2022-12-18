@@ -60,7 +60,6 @@ class PostsController extends Controller
         $post->uploadImage($request->file('image'));
         $post->setCategory($request->get('category_id'));
         $post->setTags($request->get('tags'));
-        $post->toggleStatus($request->get('status'));
         $post->toggleFeatured($request->get('is_featured'));
 
         return redirect()->route('posts.index');

@@ -71,6 +71,7 @@ class Post extends Model
         $post->s_date = Carbon::createFromFormat('d/m/Y', $fields['s_date'])->format('Y-m-d');
         $post->content = $fields['content'];
         $post->slug = Str::of($fields['title'])->slug('-');
+        $post->status = $fields['status']??1;
         $post->save();
 
         return $post;
@@ -119,9 +120,9 @@ class Post extends Model
         if ($image == null) {
             return;
         }
-        $this->removeImage();
+        Storage::delete('uploads/posts/'.$this->image);
         $filename = Str::random(10).'.'.$image->extension();
-        $image->storeAs('uploads', $filename);
+        $image->storeAs('uploads/posts', $filename);
         $this->image = $filename;
         $this->save();
     }
@@ -132,10 +133,10 @@ class Post extends Model
     public function getImage(): string
     {
         if ($this->image == null) {
-            return '/uploads/no-image.png';
+            return '/uploads/posts/no-image.png';
         }
 
-        return '/uploads/'.$this->image;
+        return '/uploads/posts/'.$this->image;
     }
 
     /**

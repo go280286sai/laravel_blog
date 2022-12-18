@@ -62,20 +62,20 @@
                                 </td>
                                 <td>
                                     @if($comment->status == 1)
-                                        <form action="{{env('APP_URL').''}}.'/admin/comments/toggle/'.{{$comment->id}}" method="get">
+                                        <form action="{{env('APP_URL').'/admin/comments/toggle/'.$comment->id}}" method="get">
                                             <button type="submit" >
                                                 <i class="fa fa-unlock"></i>
                                             </button>
                                         </form>
                                     @else
-                                        <form action="{{env('APP_URL').''}}.'/admin/comments/toggle/'.{{$comment->id}}" method="get">
+                                        <form action="{{env('APP_URL').'/admin/comments/toggle/'.$comment->id}}" method="get">
                                             <button type="submit" >
                                                 <i class="fa fa-lock"></i>
                                             </button>
                                         </form>
                                     @endif
                                     {{Form::open(['route'=>['comments.destroy', $comment->id], 'method'=>'delete'])}}
-                                    <button onclick="return confirm('are you sure?')" type="submit" class="delete">
+                                    <button onclick="return confirm('{{__('admin.are_you_sure')}}')" type="submit" class="delete">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 {{Form::close()}}

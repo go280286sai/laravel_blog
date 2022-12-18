@@ -50,10 +50,9 @@
                             <tr>
                                 <td><a href="{{env('APP_URL').'/admin/posts/create'}}"
                                        class="btn btn-success">{{__('admin.add')}}</a></td>
-                                <td> |</td>
                                 <td>@if(\Illuminate\Support\Facades\Auth::user()->is_admin)
                                         <a href="{{env('APP_URL').'/admin/posts_trash'}}"
-                                           class="btn btn-success">{{__('admin.recovery')}}</a>
+                                           class="btn btn-success btn_left">{{__('admin.recovery')}}</a>
                                     @endif</td>
                             </tr>
                         </table>
@@ -96,8 +95,7 @@
                                 <td>{{$post->views}}</td>
                                 <td>
                                     <form action="{{env('APP_URL').'/admin/posts/'.$post->id.'/edit/'}}"
-                                          method="post">
-                                        @method('put')
+                                          method="get">
                                         @csrf
                                         <button class="btn" title="{{__('admin.edit_posts')}}"><i class="fa fa-bars"></i>
                                         </button>

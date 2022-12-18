@@ -55,15 +55,14 @@
                             </td>
                             <td>
                                 <form action="{{env('APP_URL').'/admin/tags/'.$item->id.'/edit/'}}"
-                                      method="post">
-                                    @method('put')
+                                      method="get">
                                     @csrf
                                     <button class="btn"><i class="fa fa-bars"></i></button>
                                 </form>
                                 <form action="{{env('APP_URL').'/admin/tags/'.$item->id}}" method="post">
                                     @method('delete')
                                     @csrf
-                                    <button onclick="return confirm('{{__('are_you_sure')}}')" class="btn"><i class="fa fa-trash"></i></button>
+                                    <button onclick="return confirm('{{__('admin.are_you_sure')}}')" class="btn"><i class="fa fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

@@ -52,7 +52,7 @@
                 <div class="top-comment">
                     <!--top comment-->
                     <div class="pull-left image">
-                        <img src="{{'/uploads/'.$post->user->avatar}}" alt="{{$post->user->name}}" width="70px">
+                        <img src="{{'/uploads/users/'.$post->user->avatar}}" alt="{{$post->user->name}}" width="70px">
                     </div><h4>{{$post->user->name}}</h4>
                     <p>{!! $post->user->myself !!}</p>
                 </div>

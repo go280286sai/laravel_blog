@@ -103,9 +103,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function uploadAvatar($image)
     {
         if ($image != null) {
-            Storage::delete('uploads/'.$this->image);
+            Storage::delete('uploads/users'.$this->image);
             $fileName = Str::random(10).'.'.$image->extension();
-            $image->storeAs('uploads', $fileName);
+            $image->storeAs('uploads/users', $fileName);
             $this->avatar = $fileName;
             $this->save();
         } else {
@@ -116,10 +116,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAvatar()
     {
         if ($this->avatar == null) {
-            return '/uploads/no-user-image.png';
+            return '/uploads/users/no-user-image.png';
         }
 
-        return '/uploads/'.$this->avatar;
+        return '/uploads/users/'.$this->avatar;
     }
 
     public function makeAdmin()
