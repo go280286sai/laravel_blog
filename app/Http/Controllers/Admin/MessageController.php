@@ -160,4 +160,10 @@ class MessageController extends Controller
 
         return redirect('/admin/messages');
     }
+
+    public function deleteShows()
+    {
+        $shows = Message::where('status', 1)->delete();
+        return back();
+    }
 }

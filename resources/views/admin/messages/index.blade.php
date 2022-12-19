@@ -20,6 +20,7 @@
                 <div class="box-body">
                     <div class="form-group">
                         <a href="{{env('APP_URL').'/admin/message_mailing_list'}}" class="btn btn-success">{{__('admin.add')}}</a>
+                        <a href="{{env('APP_URL').'/admin/message_delete_all'}}" class="btn btn-success" onclick="return confirm('{{__('admin.are_you_sure')}}')">{{__('admin.delete_shows')}}</a>
                     </div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>

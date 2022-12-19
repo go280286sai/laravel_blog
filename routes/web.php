@@ -65,6 +65,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthAd
     Route::post('/message_setAnswer', '\App\Http\Controllers\Admin\MessageController@setAnswer');
     Route::get('/message_mailing_list', '\App\Http\Controllers\Admin\MessageController@mailing_list');
     Route::post('/message_sendMailing', '\App\Http\Controllers\Admin\MessageController@sendMailing');
+    Route::get('/message_delete_all', '\App\Http\Controllers\Admin\MessageController@deleteShows');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthMiddleware', '\App\Http\Middleware\UsersOnlineMiddleware']], function () {
