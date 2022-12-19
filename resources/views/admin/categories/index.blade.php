@@ -60,6 +60,7 @@
     </div>
     <!-- /.content-wrapper -->
 @endsection
+
 @section('js')
     <!-- DataTables -->
     <script src="{{env('APP_URL').'/assets/plugins/datatables/jquery.dataTables.min.js'}}"></script>
