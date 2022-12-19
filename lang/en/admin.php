@@ -84,6 +84,11 @@ return [
     'offline' => 'Offline',
     'create_date' => 'Create date',
     'delete' => 'Delete',
-    'update_profile'=>'Профиль успешно обновлен'
+    'update_profile'=>'Профиль успешно обновлен',
+    'for_all'=>'Для всех пользователей',
+    'for_users'=>'Для авторов',
+    'for_subscription'=>'Для подписчиков',
+    'show'=>'Просмотреть',
+    'answer'=>'Ответить'
 
 ];
