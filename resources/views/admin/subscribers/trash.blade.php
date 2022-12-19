@@ -87,7 +87,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                        </tfoot>
                     </table>
                 </div>
                 <div class="box-footer">
