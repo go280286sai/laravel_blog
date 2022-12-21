@@ -17,22 +17,22 @@
         <section class="content">
             <!-- Default box -->
             <div class="box">
-                <form action="{{env('APP_URL').'/admin/categories'}}" method="post">
+                {{Form::open(['url'=>env('APP_URL').'/admin/categories', 'method'=>'POST'])}}
                 <div class="box-body">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="exampleInputEmail1">{{__('admin.name')}}</label>
-                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="" name="title">
+                            {{Form::text('title', '', ['class'=>"form-control", 'id'=>"exampleInputEmail1" ])}}
                             @csrf
                         </div>
                     </div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                    <button class="btn btn-default" onclick="window.history.back()">{{__('admin.back')}}</button>
-                    <input type="submit" class="btn btn-success pull-right" name="submit" value="{{__('admin.send')}}">
+                    {{Form::button(__('admin.back'), ['class'=>'btn btn-default', 'onclick'=>"window.history.back()"])}}
+                    {{Form::submit(__('admin.add'), ['name'=> 'submit', 'class'=>"btn btn-warning pull-right"])}}
                 </div>
-                </form>
+                {{Form::close()}}
                 <!-- /.box-footer-->
             </div>
             <!-- /.box -->

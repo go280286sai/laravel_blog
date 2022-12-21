@@ -12,7 +12,7 @@ return [
     'view_post' => 'Переглянути',
     'homepage' => 'Домашня сторінка',
     'about_me' => 'ПРО МЕНЕ',
-    'contact' => 'CONTACT',
+    'contact' => 'Контакти',
     'my_profile' => 'Мій профіль',
     'logout' => 'Вийти',
     'register' => 'Зареєструватися',

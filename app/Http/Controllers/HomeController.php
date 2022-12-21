@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         $posts = Post::where('status', '=', 1)->orderByDesc('id')->cursorPaginate(2);
 
-        return view('pages.index', ['posts' => $posts]);
+        return view('pages.index', ['posts' => $posts, 'home'=>'active']);
     }
 
     public function show($slug)

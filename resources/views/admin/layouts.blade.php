@@ -176,10 +176,10 @@
     @show
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-            <b>Version</b> 2.3.7
+
         </div>
-        <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com/">Almsaeed Studio</a>.</strong> All rights
-        reserved.
+
+
     </footer>
 
     <!-- Control Sidebar -->
@@ -212,9 +212,9 @@
                             <i class="menu-icon fa fa-user bg-yellow"></i>
 
                             <div class="menu-info">
-                                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                <h4 class="control-sidebar-subheading">Alex Updated His Profile</h4>
 
-                                <p>New phone +1(800)555-1234</p>
+                                <p>New phone +380000000</p>
                             </div>
                         </a>
                     </li>

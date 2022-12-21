@@ -60,6 +60,7 @@ return array(
     'App\\Http\\Requests\\CommentRequest' => $baseDir . '/app/Http/Requests/CommentRequest.php',
     'App\\Http\\Requests\\MessageRequest' => $baseDir . '/app/Http/Requests/MessageRequest.php',
     'App\\Http\\Requests\\PostRequest' => $baseDir . '/app/Http/Requests/PostRequest.php',
+    'App\\Http\\Requests\\ProfileRequest' => $baseDir . '/app/Http/Requests/ProfileRequest.php',
     'App\\Http\\Requests\\ProfileUpdateRequest' => $baseDir . '/app/Http/Requests/ProfileUpdateRequest.php',
     'App\\Http\\Requests\\SubscriptionRequest' => $baseDir . '/app/Http/Requests/SubscriptionRequest.php',
     'App\\Http\\Requests\\TagRequest' => $baseDir . '/app/Http/Requests/TagRequest.php',

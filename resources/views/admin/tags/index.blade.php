@@ -37,19 +37,15 @@
                                 <td>{{$item->title}}
                                 </td>
                                 <td>
-                                    <form action="{{env('APP_URL').'/admin/tags/'.$item->id.'/edit/'}}"
-                                          method="get">
+                                    {{Form::open(['url'=>env('APP_URL').'/admin/tags/'.$item->id.'/edit/', 'method'=>'GET'])}}
                                         @csrf
-                                        <button class="btn"><i class="fa fa-bars" title="{{__('admin.edit')}}"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{env('APP_URL').'/admin/tags/'.$item->id}}" method="post">
-                                        @method('delete')
-                                        @csrf
-                                        <button title="{{__('admin.delete')}}"
-                                                onclick="return confirm('{{__('admin.are_you_sure')}}')" class="btn"><i
-                                                class="fa fa-trash"></i></button>
-                                    </form>
+                                    {{Form::button('<i class="fa fa-bars"></i>', ['title'=>__('admin.edit'), 'class'=>'btn', 'type'=>'submit'] )}}
+                                    {{Form::close()}}
+
+                                    {{Form::open(['url'=>env('APP_URL').'/admin/tags/'.$item->id, 'method'=>'DELETE'])}}
+                                    @csrf
+                                    {{Form::button('<i class="fa fa-trash"></i>', ['title'=>__('admin.delete'), 'class'=>'btn', 'type'=>'submit'])}}
+                                    {{Form::close()}}
                                 </td>
                             </tr>
                         @endforeach

@@ -38,6 +38,7 @@ Route::get('/greeting/{locale}', function ($locale) {
 
     return back();
 });
+Route::get('/unsubscribe', '\App\Http\Controllers\SubsController@unsetEmail');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthAdminMiddleware', '\App\Http\Middleware\UsersOnlineMiddleware']], function () {
     Route::resource('/tags', '\App\Http\Controllers\Admin\TagsController');

@@ -84,12 +84,12 @@ return [
     'offline' => 'Offline',
     'create_date' => 'Create date',
     'delete' => 'Delete',
-    'update_profile'=>'Профиль успешно обновлен',
-    'for_all'=>'Для всех пользователей',
-    'for_users'=>'Для авторов',
-    'for_subscription'=>'Для подписчиков',
-    'show'=>'Просмотреть',
-    'answer'=>'Ответить',
-    'delete_shows'=>'Удалить все просмотренные'
+    'update_profile'=>'Profile updated successfully',
+    'for_all'=>'For all users',
+    'for_users'=>'For authors',
+    'for_subscription'=>'For subscribers',
+    'show'=>'View',
+    'answer'=>'Answer',
+    'delete_shows'=>'Delete All Shows'
 
 ];

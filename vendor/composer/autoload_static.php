@@ -687,6 +687,7 @@ class ComposerStaticInitf656fdec000c6c727548a55c10c9bad1
         'App\\Http\\Requests\\CommentRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CommentRequest.php',
         'App\\Http\\Requests\\MessageRequest' => __DIR__ . '/../..' . '/app/Http/Requests/MessageRequest.php',
         'App\\Http\\Requests\\PostRequest' => __DIR__ . '/../..' . '/app/Http/Requests/PostRequest.php',
+        'App\\Http\\Requests\\ProfileRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileRequest.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Http\\Requests\\SubscriptionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/SubscriptionRequest.php',
         'App\\Http\\Requests\\TagRequest' => __DIR__ . '/../..' . '/app/Http/Requests/TagRequest.php',

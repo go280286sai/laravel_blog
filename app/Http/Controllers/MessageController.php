@@ -16,6 +16,6 @@ class MessageController extends Controller
 
     public function show()
     {
-        return view('message', ['title' => 'Contact info']);
+        return view('message', ['title' => 'Contact info', 'contact'=>'active']);
     }
 }

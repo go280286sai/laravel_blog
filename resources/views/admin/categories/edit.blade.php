@@ -15,28 +15,26 @@
         </section>
         <!-- Main content -->
         <section class="content">
-            <form action="{{env('APP_URL').'/admin/categories/'.$category->id}}" method="post">
-                @method('PUT')
-            <!-- Default box -->
+            {{Form::open(['url'=>env('APP_URL').'/admin/categories/'.$category->id, 'method'=>'PUT'])}}
             <div class="box">
                 <div class="box-body">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="exampleInputEmail1">{{__('admin.name')}}</label>
-                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="" value="{{$category->title}}" name="title">
+                            {{Form::text('title', $category->title, ['class'=>'form-control', 'id'=>'exampleInputEmail1'])}}
                             @csrf
                         </div>
                     </div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                    <button class="btn btn-default" onclick="window.history.back()">{{__('admin.back')}}</button>
-                    <input type="submit" class="btn btn-warning pull-right" value="{{__('admin.edit')}}" name="submit">
+                    {{Form::button(__('admin.back'), ['class'=>'btn btn-default', 'onclick'=>"window.history.back()"])}}
+                    {{Form::submit(__('admin.edit'), ['name'=> 'submit', 'class'=>"btn btn-warning pull-right"])}}
                 </div>
                 <!-- /.box-footer-->
             </div>
             <!-- /.box -->
-            </form>
+            {{Form::close()}}
         </section>
         <!-- /.content -->
     </div>

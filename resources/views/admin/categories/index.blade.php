@@ -11,7 +11,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-              {{__('admin.categories')}}
+                {{__('admin.categories')}}
             </h1>
         </section>
         <!-- Main content -->
@@ -21,7 +21,8 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="form-group">
-                        <a href="{{env('APP_URL').'/admin/categories/create'}}" class="btn btn-success">{{__('admin.add')}}</a>
+                        <a href="{{env('APP_URL').'/admin/categories/create'}}"
+                           class="btn btn-success">{{__('admin.add')}}</a>
                     </div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
@@ -37,16 +38,14 @@
                                 <td>{{$i++}}</td>
                                 <td>{{$category->title}}</td>
                                 <td>
-                                    <form action="{{env('APP_URL').'/admin/categories/'.$category->id.'/edit/'}}"
-                                          method="get">
-                                        @csrf
-                                        <button class="btn" title="{{__('admin.edit')}}"><i class="fa fa-bars"></i></button>
-                                    </form>
-                                    <form action="{{env('APP_URL').'/admin/categories/'.$category->id}}" method="post">
-                                        @method('delete')
-                                        @csrf
-                                        <button onclick="return confirm('{{__('admin.are_you_sure')}}')" class="btn" title="{{__('admin.delete')}}"><i class="fa fa-trash"></i></button>
-                                    </form>
+                                    {{Form::open(['url'=>env('APP_URL').'/admin/categories/'.$category->id.'/edit/', 'method'=>'get'])}}
+                                    {{Form::button('<i class="fa fa-bars"></i>', ['title'=>__('admin.edit'), 'class'=>'btn', 'type'=>'submit'])}}
+                                    @csrf
+                                    {{Form::close()}}
+                                    {{Form::open(['url'=>env('APP_URL').'/admin/categories/'.$category->id, 'method'=>'delete'])}}
+                                    {{Form::button('<i class="fa fa-trash"></i>', ['title'=>__('admin.delete'), 'class'=>'btn', 'type'=>'submit'])}}
+                                    @csrf
+                                    {{Form::close()}}
                                 </td>
                             </tr>
                         @endforeach

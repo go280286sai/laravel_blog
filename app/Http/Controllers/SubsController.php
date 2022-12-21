@@ -6,6 +6,7 @@ use App\Mail\SubscribeEmail;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class SubsController extends Controller
 {
@@ -25,8 +26,14 @@ class SubsController extends Controller
     {
         $subs = Subscription::all()->where('token', $token)->firstOrFail();
         $subs->token = null;
+        $subs->unset=Str::random(40);
         $subs->save();
 
         return redirect('/')->with('status', 'Ваша почта подтверждена!СПАСИБО!');
+    }
+
+    public function unsetEmail()
+    {
+        return view('emails.mailing_list');
     }
 }

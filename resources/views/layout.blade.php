@@ -35,9 +35,9 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav text-uppercase">
-                    <li><a href="/">{{__('messages.homepage')}}</a></li>
-                    <li><a href="#">{{__('messages.about_me')}}</a></li>
-                    <li><a href="/contact">{{__('messages.contact')}}</a></li>
+                    <li><a href="/"><i @if($home??false)class="red" @endif>{{__('messages.homepage')}}</i></a></li>
+                    <li><a href="#"><i @if($me??false)class="red" @endif>{{__('messages.about_me')}}</i></a></li>
+                    <li><a href="/contact"><i @if($contact??false)class="red" @endif>{{__('messages.contact')}}</i></a></li>
                 </ul>
                 <ul class="nav navbar-nav text-uppercase pull-right">
                     @if(Auth::check())
@@ -63,7 +63,7 @@
                     </div>
                 </form>
             </div>
-            <div><p>{{__('messages.title_message')}}</p></div>
+            <div><h5 class="top_text">{{__('messages.title_message')}}</h5></div>
         </div>
     </div>
     <!-- /.container-fluid -->
