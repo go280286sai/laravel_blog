@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use PHPUnit\Exception;
 
 class SubsController extends Controller
 {
@@ -26,14 +27,24 @@ class SubsController extends Controller
     {
         $subs = Subscription::all()->where('token', $token)->firstOrFail();
         $subs->token = null;
-        $subs->unset=Str::random(40);
+        $subs->unset = Str::random(40);
         $subs->save();
 
         return redirect('/')->with('status', 'Ваша почта подтверждена!СПАСИБО!');
     }
 
-    public function unsetEmail()
+    public function unsetEmail($id)
     {
-        return view('emails.mailing_list');
+        return view('pages.unsubscribe', ['id' => e($id)]);
+    }
+
+    public function unsets(Request $request)
+    {
+
+        if(Subscription::unscriber($request->get('email'))){
+            return redirect('/')->with('status', 'Вы успешно отписались от рассылки');
+        };
+        return redirect('/')->with('status', 'Вы не можете отписались от рассылки');
+
     }
 }

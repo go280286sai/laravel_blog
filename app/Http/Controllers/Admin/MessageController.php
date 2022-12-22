@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\MailingJob;
+use App\Jobs\MailingSubJob;
 use App\Mail\answer_email;
 use App\Models\Message;
 use App\Models\Subscription;
@@ -149,14 +150,17 @@ class MessageController extends Controller
         $from = Auth::user()->email;
         if ($mailing == 'for_users') {
             $mails = User::pluck('email')->all();
+            MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
         } elseif ($mailing == 'for_subscription') {
-            $mails = Subscription::pluck('email')->all();
+            $mails = Subscription::where('unset', '!=', 'null')->pluck('unset','email')->toArray();
+            MailingSubJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
         } else {
             $users = User::pluck('email')->all();
             $subscription = Subscription::pluck('email')->all();
             $mails = array_merge($users, $subscription);
+            MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
         }
-        MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
+
 
         return redirect('/admin/messages');
     }

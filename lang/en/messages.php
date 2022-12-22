@@ -34,4 +34,6 @@ return [
     'message_to_user' => 'Message to user',
     'forgot_your_password' => 'Forgot your password?',
     'remember_me' => 'Remember me',
+    'unsubscribe'=>'Вы действительно хотите отписаться?',
+    'yes'=>'Да'
 ];

@@ -15,7 +15,6 @@ class Subscription extends Model
 {
     use Searchable;
     use HasFactory;
-    use SoftDeletes;
 
     public static function add($email)
     {
@@ -30,5 +29,11 @@ class Subscription extends Model
     public function remove(): ?bool
     {
         return $this->delete();
+    }
+
+    public static function unscriber($id)
+    {
+        $uns = new static();
+        return $uns->where('unset', $id)->delete();
     }
 }
