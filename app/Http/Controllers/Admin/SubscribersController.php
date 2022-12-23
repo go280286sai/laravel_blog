@@ -8,7 +8,9 @@ use App\Models\Subscription;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class SubscribersController extends Controller
 {
@@ -51,6 +53,7 @@ class SubscribersController extends Controller
         }
         $subs->email = $request->get('email');
         $subs->save();
+        Log::info('Create email: '.Auth::user()->name);
 
         return redirect()->route('subscribers.index');
     }
@@ -101,6 +104,7 @@ class SubscribersController extends Controller
         if (Gate::denies('subscription', Subscription::class)) {
             abort(404);
         }
+        Log::info('Delete email: '.Auth::user()->name);
 
         return redirect('/admin/subscribers');
     }
@@ -111,19 +115,23 @@ class SubscribersController extends Controller
         if ($target == 'trash') {
             $id = $request->get('id');
             Subscription::onlyTrashed()->where('id', '=', $id)->forceDelete();
+            Log::info('Trash email: '.$id.' '.Auth::user()->name);
 
             return redirect()->route('subscribers_trash');
         } elseif ($target == 'recover') {
             $id = $request->get('id');
             Subscription::onlyTrashed()->where('id', '=', $id)->restore();
+            Log::info('Recover email: '.$id.' '.Auth::user()->name);
 
             return redirect()->route('subscribers_trash');
         } elseif ($target == 'recover_all') {
             Subscription::onlyTrashed()->restore();
+            Log::info('Recover all emails: '.Auth::user()->name);
 
             return redirect()->route('subscribers_trash');
         } elseif ($target == 'trash_all') {
             Subscription::onlyTrashed()->forceDelete();
+            Log::info('Trash all emails: '.Auth::user()->name);
 
             return redirect()->route('subscribers_trash');
         }

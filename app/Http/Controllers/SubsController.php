@@ -2,49 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubscribeRequest;
 use App\Mail\SubscribeEmail;
 use App\Models\Subscription;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use PHPUnit\Exception;
+use Illuminate\Validation\ValidationException;
 
 class SubsController extends Controller
 {
-    public function subscribe(Request $request)
+    /**
+     * @param SubscribeRequest $request
+     * @return RedirectResponse
+     */
+    public function subscribe(SubscribeRequest $request): RedirectResponse
     {
-        $this->validate($request, [
-            'email' => 'required|email|unique:subscriptions',
-        ]);
-
         $subs = Subscription::add($request->get('email'));
         Mail::to($subs->email)->send(new SubscribeEmail($subs->token));
-
-        return redirect()->back()->with('status', 'Проверьте вашу почту!');
+        Log::info('Add subscribe');
+        return redirect()->back()->with('status', __('messages.check_your_mail'));
     }
 
-    public function verify($token)
+    /**
+     * @param $token
+     * @return RedirectResponse
+     */
+    public function verify($token): RedirectResponse
     {
         $subs = Subscription::all()->where('token', $token)->firstOrFail();
         $subs->token = null;
         $subs->unset = Str::random(40);
         $subs->save();
-
-        return redirect('/')->with('status', 'Ваша почта подтверждена!СПАСИБО!');
+        Log::info('Full subscribe');
+        return redirect('/')->with('status', __('messages.your_email_has_been_verified'));
     }
 
-    public function unsetEmail($id)
+    /**
+     * @param $id
+     * @return View
+     */
+    public function unsetEmail($id): View
     {
         return view('pages.unsubscribe', ['id' => e($id)]);
     }
 
-    public function unsets(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function unsets(Request $request): RedirectResponse
     {
-
-        if(Subscription::unscriber($request->get('email'))){
-            return redirect('/')->with('status', 'Вы успешно отписались от рассылки');
+        if (Subscription::unscriber($request->get('email'))) {
+            Log::info('Unscriber email');
+            return redirect('/')->with('status', __('messages.successfully_unsubscribed'));
         };
-        return redirect('/')->with('status', 'Вы не можете отписались от рассылки');
-
+        Log::info('Error unscriber email');
+        return redirect('/')->with('status', __('messages.you_are_not_subscribed'));
     }
 }

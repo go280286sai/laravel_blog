@@ -35,5 +35,11 @@ return [
     'forgot_your_password' => 'Forgot your password?',
     'remember_me' => 'Remember me',
     'unsubscribe'=>'Вы действительно хотите отписаться?',
-    'yes'=>'Да'
+    'yes'=>'Да',
+    'check_your_mail'=>'Проверьте вашу почту!',
+    'your_email_has_been_verified'=>'Ваша почта подтверждена! СПАСИБО!',
+    'successfully_unsubscribed'=>'Вы успешно отписались от рассылки',
+    'you_are_not_subscribed'=>'Вы не подписаны',
+
+
 ];

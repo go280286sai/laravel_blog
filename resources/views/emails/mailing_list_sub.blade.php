@@ -128,11 +128,10 @@
                 <tr>
                     <td class="content">
 
-{{--                        <h2>Hi {{$user??''}},</h2>--}}
+                        <h2>Hi {{$user??''}},</h2>
 
-{{--                        {!! $content??'' !!}--}}
+                        {!! $content??'' !!}
 
-{{$id}}
                     </td>
                 </tr>
             </table>
@@ -147,7 +146,7 @@
                 <tr>
                     <td class="content footer" align="center">
                         <p>Sent by <a href="{{env('APP_URL')}}">My blog</a>, Kharkov</p>
-{{--                        <p><a href="mailto:">admin@admin.ua</a> | <a href="{{env('APP_URL').'/unsubscribe/'.$id??''}}">Unsubscribe</a></p>--}}
+                        <p><a href="mailto:">admin@admin.ua</a> | <a href="{{env('APP_URL').'/unsubscribe/'.$id}}">Unsubscribe</a></p>
                     </td>
                 </tr>
             </table>

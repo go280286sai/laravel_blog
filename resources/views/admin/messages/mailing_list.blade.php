@@ -32,13 +32,7 @@
                                            name="title">
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="mailing" id="flexRadioDefault1" value="for_all" checked>
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        {{__('admin.for_all')}}
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="mailing" id="flexRadioDefault2" value="for_users">
+                                    <input class="form-check-input" type="radio" name="mailing" id="flexRadioDefault2" value="for_users" checked>
                                     <label class="form-check-label" for="flexRadioDefault2">
                                         {{__('admin.for_users')}}
                                     </label>

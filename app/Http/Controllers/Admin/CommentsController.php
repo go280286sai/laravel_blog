@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class CommentsController extends Controller
 {
@@ -48,6 +49,7 @@ class CommentsController extends Controller
             abort(404);
         }
         $comment->toggleStatus();
+        Log::info('Comment true: '.Auth::user()->name);
 
         return redirect()->back();
     }
@@ -63,12 +65,13 @@ class CommentsController extends Controller
             abort(404);
         }
         $comment->remove();
+        Log::info('Delete comment');
 
         return redirect()->back();
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return RedirectResponse|void
      */
     public function recover(Request $request)
@@ -77,31 +80,36 @@ class CommentsController extends Controller
         if ($target == 'trash') {
             $id = $request->get('id');
             Comment::onlyTrashed()->where('id', '=', $id)->forceDelete();
+            Log::info('Trash comment: '.Auth::user()->name);
 
             return redirect()->route('comments_trash');
         } elseif ($target == 'recover') {
             $id = $request->get('id');
             Comment::onlyTrashed()->where('id', '=', $id)->restore();
+            Log::info('Recover comment: '.Auth::user()->name);
 
             return redirect()->route('comments_trash');
         } elseif ($target == 'recover_all') {
             Comment::onlyTrashed()->restore();
+            Log::info('Recover all comments: '.Auth::user()->name);
 
             return redirect()->route('comments_trash');
         } elseif ($target == 'trash_all') {
             Comment::onlyTrashed()->forceDelete();
+            Log::info('Trash all comments');
 
-            return redirect()->route('comments_trash');
+            return redirect()->route('comments_trash: '.Auth::user()->name);
         }
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return Application|Factory|View
      */
     public function trash(Request $request): View|Factory|Application
     {
         $trash = Comment::onlyTrashed()->get();
+        Log::info('Trash comment: '.Auth::user()->name);
 
         return view('admin.comments.trash', ['trash' => $trash]);
     }

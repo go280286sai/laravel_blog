@@ -8,6 +8,7 @@ use App\Models\Tag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TagsController extends Controller
@@ -56,6 +57,7 @@ class TagsController extends Controller
         $tag->title = $request->input('title');
         $tag->slug = Str::of($request->input('title'))->slug('-');
         $tag->save();
+        Log::info('Create new tag');
 
         return redirect()->route('tags.index');
     }
@@ -91,6 +93,7 @@ class TagsController extends Controller
         }
         $tag->title = $request->input('title');
         $tag->save();
+        Log::info('Update tag');
 
         return redirect()->route('tags.index');
     }
@@ -108,6 +111,7 @@ class TagsController extends Controller
             abort(404);
         }
         $tag->remove();
+        Log::info('Delete tag');
 
         return redirect()->route('tags.index');
     }

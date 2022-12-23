@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CategoriesController extends Controller
@@ -50,6 +51,7 @@ class CategoriesController extends Controller
         $category->title = $request->input('title');
         $category->slug = Str::of($request->input('title'))->slug('-');
         $category->save();
+        Log::info('Create category: '.$request->input('title'));
 
         return redirect()->route('categories.index');
     }
@@ -81,7 +83,7 @@ class CategoriesController extends Controller
         }
         $category->title = $request->input('title');
         $category->save();
-
+        Log::info('Update category: '.$request->input('title'));
         return redirect()->route('categories.index');
     }
 
@@ -95,6 +97,7 @@ class CategoriesController extends Controller
         if (Gate::denies('category', $category)) {
             abort(404);
         }
+        Log::info('Remove category: '.$category->title);
         $category->remove();
 
         return redirect()->route('categories.index');

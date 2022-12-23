@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -24,7 +25,9 @@ class DashboardController extends Controller
      */
     public function logout(): RedirectResponse
     {
+        Log::info('Logout: '.Auth::user()->name);
         Auth::logout();
+
 
         return redirect()->route('login');
     }

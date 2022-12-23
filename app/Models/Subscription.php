@@ -15,6 +15,7 @@ class Subscription extends Model
 {
     use Searchable;
     use HasFactory;
+    use SoftDeletes;
 
     public static function add($email)
     {

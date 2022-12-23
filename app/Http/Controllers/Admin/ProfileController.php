@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -41,6 +42,7 @@ class ProfileController extends Controller
         }
         $user->uploadAvatar($request->file('avatar'));
         $user->save();
+        Log::info('Update profile: '.Auth::user()->name);
 
         return redirect()->back()->with('status', __('admin.update_profile'));
     }
