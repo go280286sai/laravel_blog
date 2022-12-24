@@ -21,6 +21,9 @@ class Category extends Model
         return $this->hasMany(Post::class);
     }
 
+    /**
+     * @return bool|null
+     */
     public function remove(): ?bool
     {
         return $this->delete();

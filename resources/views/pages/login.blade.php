@@ -1,15 +1,6 @@
 @extends('layout')
 
 @section('style')
-    <!-- common css -->
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/bootstrap.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/font-awesome.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/animate.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.carousel.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.theme.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.transitions.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
 @endsection
 
 @section('text')
@@ -68,13 +59,6 @@
         </div>
     </div>
 @endsection
-
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/map.js'}}"></script>
 @section('js')
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/bootstrap.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/owl.carousel.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery.stickit.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/map.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
 @endsection

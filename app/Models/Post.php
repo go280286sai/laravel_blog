@@ -81,7 +81,7 @@ class Post extends Model
      * @param $fields
      * @return void
      */
-    public function edit($fields)
+    public function edit($fields): void
     {
         $post = new static;
         $post->title = $fields['title'];
@@ -95,7 +95,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function remove()
+    public function remove(): void
     {
         $this->removeImage();
         $this->delete();
@@ -104,7 +104,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function removeImage()
+    public function removeImage(): void
     {
         if ($this->image != null) {
             Storage::delete(env('USERS_IMG').$this->image);
@@ -115,7 +115,7 @@ class Post extends Model
      * @param $image
      * @return void
      */
-    public function uploadImage($image)
+    public function uploadImage($image): void
     {
         if ($image == null) {
             return;
@@ -143,7 +143,7 @@ class Post extends Model
      * @param  int  $id
      * @return void
      */
-    public function setCategory(int $id)
+    public function setCategory(int $id): void
     {
         if ($id == null) {
             return;
@@ -156,7 +156,7 @@ class Post extends Model
      * @param $ids
      * @return void
      */
-    public function setTags($ids)
+    public function setTags($ids): void
     {
         if ($ids == null) {
             return;
@@ -167,7 +167,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function setDraft()
+    public function setDraft(): void
     {
         $this->status = 0;
         $this->save();
@@ -176,7 +176,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function setPublic()
+    public function setPublic(): void
     {
         $this->status = 1;
         $this->save();
@@ -198,7 +198,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function setFeatured()
+    public function setFeatured(): void
     {
         $this->is_featured = 1;
         $this->save();
@@ -207,7 +207,7 @@ class Post extends Model
     /**
      * @return void
      */
-    public function setStandart()
+    public function setStandart(): void
     {
         $this->is_featured = 0;
         $this->save();
@@ -230,7 +230,7 @@ class Post extends Model
      * @param $value
      * @return void
      */
-    public function setDateAttribute($value)
+    public function setDateAttribute($value): void
     {
         $date = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
         $this->attributes['date'] = $date;
@@ -254,7 +254,7 @@ class Post extends Model
     {
         return ($this->category != null)
             ? $this->category->title
-            : 'Нет категории';
+            : __('messages.no_category');
     }
 
     /**
@@ -264,7 +264,7 @@ class Post extends Model
     {
         return (! $this->tags->isEmpty())
             ? implode(', ', $this->tags->pluck('title')->all())
-            : 'Нет тегов';
+            : __('messages.no_tags');
     }
 
     /**

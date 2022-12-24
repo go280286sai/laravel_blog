@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,22 +58,35 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function gender()
+    /**
+     * @return BelongsTo
+     */
+    public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class);
     }
 
-    public function posts()
+    /**
+     * @return HasMany
+     */
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
-    public function comments()
+    /**
+     * @return HasMany
+     */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public static function add($fields)
+    /**
+     * @param $fields
+     * @return static
+     */
+    public static function add($fields): static
     {
         $user = new static();
         $user->name = $fields['name'];
@@ -82,13 +97,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $user;
     }
 
-    public function edit($fields)
+    /**
+     * @param $fields
+     * @return void
+     */
+    public function edit($fields): void
     {
         $this->fill($fields);
         $this->save();
     }
 
-    public function generatePassword($password)
+    /**
+     * @param $password
+     * @return void
+     */
+    public function generatePassword($password): void
     {
         if ($password != null) {
             $this->password = bcrypt($password);
@@ -96,12 +119,19 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    public function remove()
+    /**
+     * @return void
+     */
+    public function remove(): void
     {
         $this->delete();
     }
 
-    public function uploadAvatar($image)
+    /**
+     * @param $image
+     * @return void
+     */
+    public function uploadAvatar($image): void
     {
         if ($image != null) {
             Storage::delete('uploads/users'.$this->image);
@@ -114,7 +144,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    public function getAvatar()
+    /**
+     * @return string
+     */
+    public function getAvatar(): string
     {
         if ($this->avatar == null) {
             return '/uploads/users/no-user-image.png';
@@ -123,18 +156,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return '/uploads/users/'.$this->avatar;
     }
 
-    public function makeAdmin()
+    /**
+     * @return void
+     */
+    public function makeAdmin(): void
     {
         $this->is_admin = 1;
         $this->save();
     }
 
-    public function makeNormal()
+    /**
+     * @return void
+     */
+    public function makeNormal(): void
     {
         $this->is_admin = 0;
         $this->save();
     }
 
+    /**
+     * @param $value
+     * @return null
+     */
     public function toggleAdmin($value)
     {
         if ($value == null) {
@@ -144,18 +187,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->makeAdmin();
     }
 
-    public function ban()
+    /**
+     * @return void
+     */
+    public function ban(): void
     {
         $this->status = 0;
         $this->save();
     }
 
-    public function unban()
+    /**
+     * @return void
+     */
+    public function unban(): void
     {
         $this->status = 1;
         $this->save();
     }
 
+    /**
+     * @param $value
+     * @return null
+     */
     public function toggleBan($value)
     {
         if ($value == 0) {

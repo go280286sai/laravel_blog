@@ -6,18 +6,27 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index()
+    /**
+     * @return View
+     */
+    public function index(): View
     {
         $posts = Post::where('status', '=', 1)->orderByDesc('id')->cursorPaginate(2);
 
         return view('pages.index', ['posts' => $posts, 'home'=>'active']);
     }
 
-    public function show($slug)
+    /**
+     * @param $slug
+     * @return View
+     */
+    public function show($slug): View
     {
         $post = Post::where('slug', $slug)->where('status', 1)->firstOrFail();
         $ip = [];
@@ -35,7 +44,11 @@ class HomeController extends Controller
         return view('pages.show', compact('post'));
     }
 
-    public function tag($slug)
+    /**
+     * @param $slug
+     * @return View
+     */
+    public function tag($slug): View
     {
         $tag = Tag::all()->where('slug', $slug)->firstOrFail();
         $posts = $tag->posts()->paginate(2);
@@ -43,7 +56,11 @@ class HomeController extends Controller
         return view('pages.list', ['posts' => $posts]);
     }
 
-    public function category($slug)
+    /**
+     * @param $slug
+     * @return View
+     */
+    public function category($slug): View
     {
         $category = Category::all()->where('slug', $slug)->firstOrFail();
         $posts = $category->posts()->where('status', 1)->paginate(2);

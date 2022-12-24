@@ -21,6 +21,6 @@ class CommentsController extends Controller
         $comment->user_id = Auth::user()->id;
         $comment->save();
 
-        return redirect()->back()->with('status', 'Ваш комментарий будет скоро добавлен!');
+        return redirect()->back()->with('status', __('massages.add_comment'));
     }
 }

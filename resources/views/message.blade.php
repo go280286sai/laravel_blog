@@ -1,16 +1,8 @@
 @extends('layout')
-@section('style')
-    <!-- common css -->
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/bootstrap.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/font-awesome.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/animate.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.carousel.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.theme.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.transitions.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
 
+@section('style')
 @endsection
+
 @section('text')
     <!--main content start-->
     <div class="main-content">
@@ -57,8 +49,6 @@
                             </div>
                         </form>       <!-- /.box-footer-->
                     </div>
-
-
                 </div>
                 @include('pages._sidebar')
             </div>
@@ -66,6 +56,7 @@
     </div>
     <!-- end main content-->
 @endsection
+
 @section('js')
     <!-- js files -->
     <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>

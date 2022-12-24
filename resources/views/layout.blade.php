@@ -8,8 +8,15 @@
     <title>{{env('APP_NAME')}}</title>
     <!-- common css -->
     <link rel="stylesheet" href="{{env('APP_URL').'/assets/css/blog.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/bootstrap.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/font-awesome.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/animate.min.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.carousel.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.theme.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.transitions.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
+    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
     @section('style')
-
     @show
 
     <!-- HTML5 shim and Respond.js IE9 support of HTML5 elements and media queries -->
@@ -211,7 +218,13 @@
     </div>
 </footer>
 <!-- js files -->
-
+<!-- js files -->
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/bootstrap.min.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/owl.carousel.min.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery.stickit.min.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
 @section('js')
 @show
 

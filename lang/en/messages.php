@@ -40,6 +40,11 @@ return [
     'your_email_has_been_verified'=>'Ваша почта подтверждена! СПАСИБО!',
     'successfully_unsubscribed'=>'Вы успешно отписались от рассылки',
     'you_are_not_subscribed'=>'Вы не подписаны',
+    'error_input'=>'Неправильный логин или пароль',
+    'add_comment'=>'Ваш комментарий будет скоро добавлен!',
+    'you_message_send'=>'You message send',
+    'no_category'=>'Нет категории',
+    'no_tags'=>'Нет тегов'
 
 
 ];

@@ -80,7 +80,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthMi
     Route::get('/profile', '\App\Http\Controllers\Admin\ProfileController@index');
     Route::post('/profile', '\App\Http\Controllers\Admin\ProfileController@store');
     Route::post('/comment', '\App\Http\Controllers\CommentsController@store');
-
     Route::post('/search', '\App\Http\Controllers\SearchController@show');
 });
 require __DIR__.'/auth.php';

@@ -12,7 +12,7 @@
             </form>
         </aside>
         <aside class="widget border pos-padding">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{  __('messages.category') }}</strong> </h3>
+            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.category')}}</strong></h3>
             <ul>
                 @foreach($categories as $category)
                     <li>

@@ -17,7 +17,11 @@ class Subscription extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public static function add($email)
+    /**
+     * @param $email
+     * @return static
+     */
+    public static function add($email): static
     {
         $sub = new static();
         $sub->email = $email;
@@ -27,12 +31,19 @@ class Subscription extends Model
         return $sub;
     }
 
+    /**
+     * @return bool|null
+     */
     public function remove(): ?bool
     {
         return $this->delete();
     }
 
-    public static function unscriber($id)
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public static function unscriber($id): mixed
     {
         $uns = new static();
         return $uns->where('unset', $id)->delete();

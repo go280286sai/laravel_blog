@@ -15,7 +15,11 @@ class Message extends Model
 
     protected $fillable = ['name', 'email', 'title', 'content'];
 
-    public static function addMessage($request)
+    /**
+     * @param $request
+     * @return static
+     */
+    public static function addMessage($request): static
     {
         $message = new static();
         $message->fill($request);

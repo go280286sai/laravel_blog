@@ -1,15 +1,6 @@
 @extends('layout')
 
 @section('style')
-    <!-- common css -->
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/bootstrap.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/font-awesome.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/animate.min.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.carousel.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.theme.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/owl.transitions.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
-    <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
 @endsection
 
 @section('text')
@@ -65,43 +56,8 @@
     </div>
     <!-- end main content-->
 @endsection
-
+<script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/map.js'}}"></script>
 @section('js')
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/bootstrap.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/owl.carousel.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery.stickit.min.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/map.js'}}"></script>
-    <script type="text/javascript">
-        /* ==== google map ====*/
-        function initialize() {
-            let mapOptions = {
-                zoom: 14,
-                center: new google.maps.LatLng(23.7893837, 90.38596079999999),
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                scrollwheel: false
-            };
-
-            let map = new google.maps.Map(document.getElementById('googleMap'), mapOptions);
-
-            let marker = new google.maps.Marker({
-                position: new google.maps.LatLng(23.7893837, 90.38596079999999),
-            });
-
-            marker.setMap(map);
-            let infowindow = new google.maps.InfoWindow({
-                content: "Our location!"
-            });
-
-            infowindow.open(map, marker);
-
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
-
-    </script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
-    <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
 @endsection
 
 

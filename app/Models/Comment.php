@@ -33,7 +33,7 @@ class Comment extends Model
     /**
      * @return void
      */
-    public function allow()
+    public function allow(): void
     {
         $this->status = 1;
         $this->save();
@@ -42,7 +42,7 @@ class Comment extends Model
     /**
      * @return void
      */
-    public function disAllow()
+    public function disAllow(): void
     {
         $this->status = 0;
         $this->save();
@@ -63,7 +63,7 @@ class Comment extends Model
     /**
      * @return void
      */
-    public function remove()
+    public function remove(): void
     {
         $this->delete();
     }

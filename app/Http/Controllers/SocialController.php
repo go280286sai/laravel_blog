@@ -4,16 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class SocialController extends Controller
 {
-    public function facebookRedirect()
+    /**
+     * @return \Illuminate\Http\RedirectResponse|RedirectResponse
+     */
+    public function facebookRedirect(): RedirectResponse|\Illuminate\Http\RedirectResponse
     {
         return Socialite::driver('facebook')->redirect();
     }
 
+    /**
+     * @return Application|\Illuminate\Http\RedirectResponse|Redirector|void
+     */
     public function loginWithFacebook()
     {
         try {
@@ -23,7 +33,6 @@ class SocialController extends Controller
             if ($isUser) {
                 Auth::login($isUser);
 
-                return redirect('/admin/dashboard');
             } else {
                 $createUser = new User();
                 $createUser->name = $user->name;
@@ -33,18 +42,25 @@ class SocialController extends Controller
                 $createUser->save();
                 Auth::login($createUser);
 
-                return redirect('/admin/dashboard');
             }
+            Log::info('Enter with Facebook: '.Auth::user()->name);
+            return redirect('/admin/dashboard');
         } catch (Exception $exception) {
-            dd($exception->getMessage());
+            Log::error($exception->getMessage());
         }
     }
 
-    public function githubRedirect()
+    /**
+     * @return \Illuminate\Http\RedirectResponse|RedirectResponse
+     */
+    public function githubRedirect(): RedirectResponse|\Illuminate\Http\RedirectResponse
     {
         return Socialite::driver('github')->redirect();
     }
 
+    /**
+     * @return Application|\Illuminate\Http\RedirectResponse|Redirector|void
+     */
     public function loginWithGithub()
     {
         try {
@@ -54,7 +70,6 @@ class SocialController extends Controller
             if ($isUser) {
                 Auth::login($isUser);
 
-                return redirect('/admin/dashboard');
             } else {
                 $createUser = new User();
                 $createUser->name = $user->name;
@@ -64,10 +79,11 @@ class SocialController extends Controller
                 $createUser->save();
                 Auth::login($createUser);
 
-                return redirect('/admin/dashboard');
             }
+            Log::info('Enter with GitHub: '.Auth::user()->name);
+            return redirect('/admin/dashboard');
         } catch (Exception $exception) {
-            dd($exception->getMessage());
+            Log::error($exception->getMessage());
         }
     }
 }

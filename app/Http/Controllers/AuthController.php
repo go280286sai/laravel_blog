@@ -3,17 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function registerForm()
+    /**
+     * @return View
+     */
+    public function registerForm(): View
     {
         return view('pages.register');
     }
 
-    public function register(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
+    public function register(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'name' => 'required',
@@ -23,16 +35,25 @@ class AuthController extends Controller
 
         $user = User::add($request->all());
         $user->generatePassword($request->get('password'));
+        Log::info('Create new user: ' . $user->name);
 
         return redirect('/login');
     }
 
-    public function loginForm()
+    /**
+     * @return View
+     */
+    public function loginForm(): View
     {
         return view('pages.login');
     }
 
-    public function login(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
+    public function login(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|email',
@@ -43,14 +64,19 @@ class AuthController extends Controller
             'email' => $request->get('email'),
             'password' => $request->get('password'),
         ])) {
+            Log::info('Enter user:' . Auth::user()->name);
             return redirect('/');
         }
-
-        return redirect()->back()->with('status', 'Неправильный логин или пароль');
+        Log::info('Error input login');
+        return redirect()->back()->with('status', __('messages.error_input'));
     }
 
-    public function logout()
+    /**
+     * @return RedirectResponse
+     */
+    public function logout(): RedirectResponse
     {
+        Log::info('Logout: ' . Auth::user()->name);
         Auth::logout();
 
         return redirect('/login');
