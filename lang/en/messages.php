@@ -34,17 +34,17 @@ return [
     'message_to_user' => 'Message to user',
     'forgot_your_password' => 'Forgot your password?',
     'remember_me' => 'Remember me',
-    'unsubscribe'=>'Вы действительно хотите отписаться?',
-    'yes'=>'Да',
-    'check_your_mail'=>'Проверьте вашу почту!',
-    'your_email_has_been_verified'=>'Ваша почта подтверждена! СПАСИБО!',
-    'successfully_unsubscribed'=>'Вы успешно отписались от рассылки',
-    'you_are_not_subscribed'=>'Вы не подписаны',
-    'error_input'=>'Неправильный логин или пароль',
-    'add_comment'=>'Ваш комментарий будет скоро добавлен!',
-    'you_message_send'=>'You message send',
-    'no_category'=>'Нет категории',
-    'no_tags'=>'Нет тегов'
+    'unsubscribe' => 'Are you sure you want to unsubscribe?',
+    'yes' => 'yes',
+    'check_your_mail' => 'Check your mail!',
+    'your_email_has_been_verified' => 'Your email has been verified! THANKS!',
+    'successfully_unsubscribed' => 'You have successfully unsubscribed',
+    'you_are_not_subscribed' => 'You are not subscribed',
+    'error_input' => 'Incorrect username or password',
+    'add_comment' => 'Your comment will be added soon!',
+    'you_message_send' => 'You are sending a message',
+    'no_category' => 'No category',
+    'no_tags' => 'No tags'
 
 
 ];

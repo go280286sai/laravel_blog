@@ -34,4 +34,15 @@ return [
     'message_to_user' => 'Отредактировать сообщение используется',
     'forgot_your_password' => 'Забыли пароль?',
     'remember_me' => 'Запомнить меня',
+    'unsubscribe' => 'Вы действительно хотите отписаться?',
+    'да' => 'Да',
+    'check_your_mail' => 'Проверьте вашу почту!',
+    'your_email_has_been_verified' => 'Ваша почта подтверждена! СПАСИБО!',
+    'successfully_unsubscribed' => 'Вы успешно отписались от рассылки',
+    'you_are_not_subscribed' => 'Вы не подписаны',
+    'error_input' => 'Неправильный логин или пароль',
+    'add_comment' => 'Ваш комментарий будет скоро добавлен!',
+    'you_message_send' => 'Вы отправляете сообщение',
+    'no_category' => 'Нет категории',
+    'no_tags' => 'Нет тегов'
 ];

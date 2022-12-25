@@ -34,4 +34,15 @@ return [
     'message_to_user' => 'Повідомлення користувачеві',
     'forgot_your_password' => 'Забули пароль?',
     'remember_me' => 'Remember me',
+    'unsubscribe' => 'Ви дійсно хочете відписатись?',
+    'да' => 'Да',
+    'check_your_mail' => 'Перевірте вашу пошту!',
+    'your_email_has_been_verified' => 'Ваша пошта підтверджена! ДЯКУЮ!',
+    'successfully_unsubscribed' => 'Ви успішно відписалися від розсилки',
+    'you_are_not_subscribed' => 'Ви не підписані',
+    'error_input' => 'Неправильний логін або пароль',
+    'add_comment' => 'Ваш коментар буде скоро додано!',
+    'you_message_send' => 'Ви відправляєте повідомлення',
+    'no_category' => 'Нет категорії',
+    'no_tags' => 'Нет тегов'
 ];
