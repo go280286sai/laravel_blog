@@ -67,11 +67,13 @@ class UsersController extends Controller
      * @param $id
      * @return RedirectResponse
      */
-    public function update(UsersRequest $request, $id): RedirectResponse
+    public function update(Request $request, $id): RedirectResponse
     {
-        $user = User::all()->find($id);
-        $user->edit($request->all()); //name,email
-        $user->generatePassword($request->get('password'));
+
+        $this->validate($request, [
+            'phone'=>'min:10'
+        ]);
+        $user=User::edit($request->all(), $id); //name,email
         $user->uploadAvatar($request->file('avatar'));
         Log::info('Update user: '.$user->name.' --'. Auth::user()->name);
 

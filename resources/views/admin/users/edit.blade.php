@@ -39,14 +39,8 @@
 
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">{{__('admin.email')}}</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                       placeholder="{{__('admin.email')}}" value="{{$user->email}}">
-
-                        </div>
-                        <div class="form-group">
                             <label for="exampleInputEmail1">{{__('admin.phone_number')}}</label>
-                                <input type="number" class="form-control" id="phone" name="phone"
+                                <input type="" class="form-control" id="phone" name="phone"
                                        placeholder="{{__('admin.phone_number')}}" value="{{$user->phone}}">
 
                         </div>
