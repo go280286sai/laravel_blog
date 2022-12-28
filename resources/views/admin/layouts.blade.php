@@ -27,7 +27,7 @@
     <!-- Button style-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-@section('style')
+    @section('style')
 
 @show
 
@@ -66,17 +66,20 @@
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header">
-                                <img src="{{'/uploads/users/'.$admin->avatar}}" class="img-circle" alt="{{$admin->name}}">
+                                <img src="{{'/uploads/users/'.$admin->avatar}}" class="img-circle"
+                                     alt="{{$admin->name}}">
                                 <p>
                                     {{$admin->name}}
                                 </p>
                             </li>
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="{{env('APP_URL').'/admin/profile/'}}" class="btn btn-default btn-flat">{{__('admin.profile')}}</a>
+                                    <a href="{{env('APP_URL').'/admin/profile/'}}"
+                                       class="btn btn-default btn-flat">{{__('admin.profile')}}</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="{{env('APP_URL').'/logout/'}}" class="btn btn-default btn-flat">{{__('admin.logout')}}</a>
+                                    <a href="{{env('APP_URL').'/logout/'}}"
+                                       class="btn btn-default btn-flat">{{__('admin.logout')}}</a>
                                 </div>
                             </li>
                         </ul>
@@ -126,10 +129,13 @@
                         <i class="fa fa-dashboard"></i> <span>{{__('admin.profile')}}</span>
                     </a>
                 </li>
-                <li><a href="{{env('APP_URL').'/admin/posts/'}}"><i class="fa fa-sticky-note-o"></i> <span>{{__('admin.posts')}}</span></a></li>
+                <li><a href="{{env('APP_URL').'/admin/posts/'}}"><i class="fa fa-sticky-note-o"></i>
+                        <span>{{__('admin.posts')}}</span></a></li>
                 @if($admin->is_admin)
-                <li><a href="{{env('APP_URL').'/admin/categories/'}}"><i class="fa fa-list-ul"></i> <span>{{__('admin.categories')}}</span></a></li>
-                <li><a href="{{env('APP_URL').'/admin/tags'}}"><i class="fa fa-tags"></i> <span>{{__('admin.tags')}}</span></a></li>
+                    <li><a href="{{env('APP_URL').'/admin/categories/'}}"><i class="fa fa-list-ul"></i>
+                            <span>{{__('admin.categories')}}</span></a></li>
+                    <li><a href="{{env('APP_URL').'/admin/tags'}}"><i class="fa fa-tags"></i>
+                            <span>{{__('admin.tags')}}</span></a></li>
                 @endif
                 <li>
                     <a href="{{env('APP_URL').'/admin/comments/'}}">
@@ -142,8 +148,10 @@
 
 
                 @if($admin->is_admin)
-                <li><a href="{{env('APP_URL').'/admin/users/'}}"><i class="fa fa-users"></i> <span>{{__('admin.users')}}</span></a></li>
-                <li><a href="{{env('APP_URL').'/admin/subscribers/'}}"><i class="fa fa-user-plus"></i> <span>{{__('admin.subscriptions')}}</span></a></li>
+                    <li><a href="{{env('APP_URL').'/admin/users/'}}"><i class="fa fa-users"></i>
+                            <span>{{__('admin.users')}}</span></a></li>
+                    <li><a href="{{env('APP_URL').'/admin/subscribers/'}}"><i class="fa fa-user-plus"></i>
+                            <span>{{__('admin.subscriptions')}}</span></a></li>
                     <li>
                         <a href="{{env('APP_URL').'/admin/messages/'}}">
                             <i class="fa fa-mail-forward"></i> <span>{{__('admin.email')}}</span>
@@ -152,18 +160,26 @@
             </span>
                         </a>
                     </li>
-                <li><a href="{{env('APP_URL').'/telescope/'}}" target="_blank"><i class="fa fa-shower"></i> <span>{{__('admin.resource_monitoring')}}</span></a></li>
+                    <li><a href="{{env('APP_URL').'/telescope/'}}" target="_blank"><i class="fa fa-shower"></i>
+                            <span>{{__('admin.resource_monitoring')}}</span></a></li>
+
+                    <li><a href="{{env('APP_URL').'/admin/telegram/'}}"><i class="fa fa-male"></i>
+                            <span>{{__('admin.telegram')}}</span> <span class="pull-right-container">
+              <small class="label pull-right bg-green">{{$telegrams_count}}</small>
+            </span></a></li>
 
                 @endif
                 @if(!$admin->is_admin)
-                <li>  <form action="{{env('APP_URL').'/admin/users/'.$admin->id}}" method="post">
-                        @method('delete')
-                        @csrf
-                        <button onclick="return confirm('Вы уверенны? С удаление аккаунта будут удалены все статьи. Восстановить аккаунт будет возможно' +
-                         'с письменным обращением к администратору в течении 30 дней!')"
-                                title="{{__('admin.delete')}}"><i class="fa-barcode fa-remove"><span>Удалить аккаунт</span></i>
-                        </button>
-                    </form></li>
+                    <li>
+                        <form action="{{env('APP_URL').'/admin/users/'.$admin->id}}" method="post">
+                            @method('delete')
+                            @csrf
+                            <button onclick="return confirm({{__('admin.delete_info')}})"
+                                    title="{{__('admin.delete')}}"><i
+                                    class="fa-barcode fa-remove"><span>{{__('admin.delete_account')}}</span></i>
+                            </button>
+                        </form>
+                    </li>
                 @endif
             </ul>
         </section>
@@ -172,7 +188,7 @@
 
     <!-- =============================================== -->
 
- @section('text')
+    @section('text')
     @show
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
@@ -403,9 +419,9 @@
 @show
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
         var editor = CKEDITOR.replaceAll();
-        CKFinder.setupCKEditor( editor );
+        CKFinder.setupCKEditor(editor);
     })
 
 </script>

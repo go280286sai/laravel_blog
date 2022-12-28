@@ -84,6 +84,7 @@ class CategoriesController extends Controller
         $category->title = $request->input('title');
         $category->save();
         Log::info('Update category: '.$request->input('title'));
+
         return redirect()->route('categories.index');
     }
 

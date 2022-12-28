@@ -21,7 +21,7 @@ class MailingListSub extends Mailable
     {
         $this->title = $title;
         $this->content = $content;
-        $this->id=$id;
+        $this->id = $id;
     }
 
     /**
@@ -48,7 +48,7 @@ class MailingListSub extends Mailable
             with: [
                 'title' => $this->title,
                 'content' => $this->content,
-                'id'=>$this->id,
+                'id' => $this->id,
             ],
         );
     }

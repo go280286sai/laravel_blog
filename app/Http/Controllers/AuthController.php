@@ -21,8 +21,9 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
+     *
      * @throws ValidationException
      */
     public function register(Request $request): RedirectResponse
@@ -35,7 +36,7 @@ class AuthController extends Controller
 
         $user = User::add($request->all());
         $user->generatePassword($request->get('password'));
-        Log::info('Create new user: ' . $user->name);
+        Log::info('Create new user: '.$user->name);
 
         return redirect('/login');
     }
@@ -49,8 +50,9 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
+     *
      * @throws ValidationException
      */
     public function login(Request $request): RedirectResponse
@@ -64,10 +66,12 @@ class AuthController extends Controller
             'email' => $request->get('email'),
             'password' => $request->get('password'),
         ])) {
-            Log::info('Enter user:' . Auth::user()->name);
+            Log::info('Enter user:'.Auth::user()->name);
+
             return redirect('/');
         }
         Log::info('Error input login');
+
         return redirect()->back()->with('status', __('messages.error_input'));
     }
 
@@ -76,7 +80,7 @@ class AuthController extends Controller
      */
     public function logout(): RedirectResponse
     {
-        Log::info('Logout: ' . Auth::user()->name);
+        Log::info('Logout: '.Auth::user()->name);
         Auth::logout();
 
         return redirect('/login');

@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -38,7 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'gender_id',
         'myself',
-        'password'
+        'password',
     ];
 
     /**
@@ -112,10 +110,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $user->phone = $fields['phone'] ?? null;
         $user->gender_id = $fields['gender_id'] ?? null;
         $user->myself = $fields['myself'] ?? null;
-        if (!empty($fields['password'])) {
+        if (! empty($fields['password'])) {
             $user->password = bcrypt($fields['password']);
         }
         $user->save();
+
         return $user;
     }
 

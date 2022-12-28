@@ -32,7 +32,6 @@ class SocialController extends Controller
 
             if ($isUser) {
                 Auth::login($isUser);
-
             } else {
                 $createUser = new User();
                 $createUser->name = $user->name;
@@ -41,9 +40,9 @@ class SocialController extends Controller
                 $createUser->password = encrypt('user');
                 $createUser->save();
                 Auth::login($createUser);
-
             }
             Log::info('Enter with Facebook: '.Auth::user()->name);
+
             return redirect('/admin/dashboard');
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
@@ -69,7 +68,6 @@ class SocialController extends Controller
 
             if ($isUser) {
                 Auth::login($isUser);
-
             } else {
                 $createUser = new User();
                 $createUser->name = $user->name;
@@ -78,9 +76,9 @@ class SocialController extends Controller
                 $createUser->password = encrypt('user');
                 $createUser->save();
                 Auth::login($createUser);
-
             }
             Log::info('Enter with GitHub: '.Auth::user()->name);
+
             return redirect('/admin/dashboard');
         } catch (Exception $exception) {
             Log::error($exception->getMessage());

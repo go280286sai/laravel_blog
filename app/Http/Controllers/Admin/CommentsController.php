@@ -71,7 +71,7 @@ class CommentsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse|void
      */
     public function recover(Request $request)
@@ -103,7 +103,7 @@ class CommentsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return Application|Factory|View
      */
     public function trash(Request $request): View|Factory|Application

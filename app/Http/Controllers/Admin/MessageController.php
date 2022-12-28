@@ -45,7 +45,7 @@ class MessageController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return void
      */
     public function store(Request $request): void
@@ -56,7 +56,7 @@ class MessageController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return View
      */
     public function show(int $id): View
@@ -69,7 +69,7 @@ class MessageController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return void
      */
     public function edit(int $id): void
@@ -80,8 +80,8 @@ class MessageController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int $id
+     * @param  Request  $request
+     * @param  int  $id
      * @return RedirectResponse
      */
     public function update(Request $request, int $id): RedirectResponse
@@ -89,7 +89,7 @@ class MessageController extends Controller
         $message = Message::find($id);
         $message->status = 1;
         $message->save();
-        Log::info('Message status read: ' . $message->title . ' ' . Auth::user()->name);
+        Log::info('Message status read: '.$message->title.' '.Auth::user()->name);
 
         return back();
     }
@@ -97,19 +97,19 @@ class MessageController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return RedirectResponse
      */
     public function destroy(int $id): RedirectResponse
     {
         $message = Message::where('id', $id)->delete();
-        Log::info('Delete message: ' . $message->title . ' ' . Auth::user()->name);
+        Log::info('Delete message: '.$message->title.' '.Auth::user()->name);
 
         return back();
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function getAnswer(Request $request): View
@@ -124,18 +124,18 @@ class MessageController extends Controller
                 'name' => $name,
                 'title' => $title,
                 'email' => $email,
-                'content' => $content
+                'content' => $content,
             ]);
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return Redirector|Application|RedirectResponse
      */
     public function setAnswer(Request $request): Application|RedirectResponse|Redirector
     {
         Mail::to($request->email)->cc(Auth::user()->email)->send(new answer_email($request->all()));
-        Log::info('Answer the message: ' . $request->email . ' ' . $request->title . ' --' . Auth::user()->name);
+        Log::info('Answer the message: '.$request->email.' '.$request->title.' --'.Auth::user()->name);
 
         return redirect('/admin/messages');
     }
@@ -149,7 +149,7 @@ class MessageController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
      */
     public function sendMailing(Request $request): RedirectResponse
@@ -161,11 +161,11 @@ class MessageController extends Controller
         if ($mailing == 'for_users') {
             $mails = User::pluck('email')->all();
             MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
-            Log::info('Mailing for users: ' . Auth::user()->name);
+            Log::info('Mailing for users: '.Auth::user()->name);
         } elseif ($mailing == 'for_subscription') {
             $mails = Subscription::where('unset', '!=', 'null')->pluck('unset', 'email')->toArray();
             MailingSubJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
-            Log::info('Mailing for subscription: ' . Auth::user()->name);
+            Log::info('Mailing for subscription: '.Auth::user()->name);
         }
 
         return redirect('/admin/messages');
@@ -177,7 +177,7 @@ class MessageController extends Controller
     public function deleteShows(): RedirectResponse
     {
         $shows = Message::where('status', 1)->delete();
-        Log::info('Delete all read messages: ' . Auth::user()->name);
+        Log::info('Delete all read messages: '.Auth::user()->name);
 
         return back();
     }

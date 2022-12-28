@@ -8,7 +8,6 @@ use App\Mail\SendMessageEmail;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,7 +37,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @param UsersRequest $request
+     * @param  UsersRequest  $request
      * @return RedirectResponse
      */
     public function store(UsersRequest $request): RedirectResponse
@@ -46,7 +45,7 @@ class UsersController extends Controller
         $user = User::add($request->all());
         $user->generatePassword($request->get('password'));
         $user->uploadAvatar($request->file('avatar'));
-        Log::info('Create user: '.$user->name.' --'. Auth::user()->name);
+        Log::info('Create user: '.$user->name.' --'.Auth::user()->name);
 
         return redirect()->route('users.index');
     }
@@ -63,19 +62,18 @@ class UsersController extends Controller
     }
 
     /**
-     * @param UsersRequest $request
+     * @param  UsersRequest  $request
      * @param $id
      * @return RedirectResponse
      */
     public function update(Request $request, $id): RedirectResponse
     {
-
         $this->validate($request, [
-            'phone'=>'min:10'
+            'phone' => 'min:10',
         ]);
-        $user=User::edit($request->all(), $id); //name,email
+        $user = User::edit($request->all(), $id); //name,email
         $user->uploadAvatar($request->file('avatar'));
-        Log::info('Update user: '.$user->name.' --'. Auth::user()->name);
+        Log::info('Update user: '.$user->name.' --'.Auth::user()->name);
 
         return redirect()->route('users.index');
     }
@@ -94,7 +92,7 @@ class UsersController extends Controller
             Post::where('user_id', '=', $id)->delete();
             User::find($id)->delete();
         });
-        Log::info('Delete user: '.$id.' --'. Auth::user()->name);
+        Log::info('Delete user: '.$id.' --'.Auth::user()->name);
         if (! Auth::user()->is_admin) {
             return redirect('/');
         }
@@ -103,7 +101,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function viewCommentUser(Request $request): View
@@ -115,7 +113,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
      */
     public function addCommentUser(Request $request): RedirectResponse
@@ -125,13 +123,13 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->comment = $content;
         $user->save();
-        Log::info('Create comment user: '.$user->name.' '.$content.' --'. Auth::user()->name);
+        Log::info('Create comment user: '.$user->name.' '.$content.' --'.Auth::user()->name);
 
         return redirect()->route('users.index');
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function viewMailUser(Request $request): View
@@ -143,13 +141,13 @@ class UsersController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
      */
     public function sendMailUser(Request $request): RedirectResponse
     {
         Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
-        Log::info('Send email user: '.$request->email.' '.$request->get('content').' --'. Auth::user()->name);
+        Log::info('Send email user: '.$request->email.' '.$request->get('content').' --'.Auth::user()->name);
 
         return redirect()->route('users.index');
     }
@@ -162,13 +160,13 @@ class UsersController extends Controller
     {
         $user = User::find($id);
         $user->toggleBan($user->status);
-        Log::info('Ban user: '.$user->name.' --'. Auth::user()->name);
+        Log::info('Ban user: '.$user->name.' --'.Auth::user()->name);
 
         return redirect()->back();
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse|void
      */
     public function recover(Request $request)
@@ -177,13 +175,13 @@ class UsersController extends Controller
         if ($target == 'trash') {
             $id = $request->get('id');
             $this->getTrash($id);
-            Log::info('Trash user: '.$id.' --'. Auth::user()->name);
+            Log::info('Trash user: '.$id.' --'.Auth::user()->name);
 
             return redirect()->route('users_trash');
         } elseif ($target == 'recover') {
             $id = $request->get('id');
             $this->getRecover($id);
-            Log::info('Recover user: '.$id.' --'. Auth::user()->name);
+            Log::info('Recover user: '.$id.' --'.Auth::user()->name);
 
             return redirect()->route('users_trash');
         } elseif ($target == 'recover_all') {
@@ -191,7 +189,7 @@ class UsersController extends Controller
             foreach ($users as $user) {
                 $this->getRecover($user->id);
             }
-            Log::info('Recover all users: '.' --'. Auth::user()->name);
+            Log::info('Recover all users: '.' --'.Auth::user()->name);
 
             return redirect()->route('users_trash');
         } elseif ($target == 'trash_all') {
@@ -199,14 +197,14 @@ class UsersController extends Controller
             foreach ($users as $user) {
                 $this->getTrash($user->id);
             }
-            Log::info('Trash all users: '.' --'. Auth::user()->name);
+            Log::info('Trash all users: '.' --'.Auth::user()->name);
 
             return redirect()->route('users_trash');
         }
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function trash(Request $request): View

@@ -23,21 +23,20 @@ class ProfileController extends Controller
     }
 
     /**
-     * @param ProfileRequest $request
+     * @param  ProfileRequest  $request
      * @return RedirectResponse
      *
      * @throws ValidationException
      */
     public function store(ProfileRequest $request): RedirectResponse
     {
-
         $user = Auth::user();
         $user->name = $request->get('name');
         $user->birthday = $request->get('birthday') ?? null;
         $user->phone = $request->get('phone') ?? null;
         $user->gender_id = $request->get('gender_id') ?? null;
         $user->myself = $request->get('myself') ?? null;
-        if (!empty($request->get('password'))) {
+        if (! empty($request->get('password'))) {
             $user->password = bcrypt($request->get('password'));
         }
         $user->uploadAvatar($request->file('avatar'));

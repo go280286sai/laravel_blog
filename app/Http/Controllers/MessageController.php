@@ -9,7 +9,7 @@ use Illuminate\View\View;
 class MessageController extends Controller
 {
     /**
-     * @param MessageRequest $request
+     * @param  MessageRequest  $request
      * @return View
      */
     public function create(MessageRequest $request): View
@@ -24,6 +24,6 @@ class MessageController extends Controller
      */
     public function show(): View
     {
-        return view('message', ['title' => 'Contact info', 'contact'=>'active']);
+        return view('message', ['title' => 'Contact info', 'contact' => 'active']);
     }
 }

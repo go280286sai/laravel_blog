@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Carbon\Carbon;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -19,7 +18,7 @@ class HomeController extends Controller
     {
         $posts = Post::where('status', '=', 1)->orderByDesc('id')->cursorPaginate(2);
 
-        return view('pages.index', ['posts' => $posts, 'home'=>'active']);
+        return view('pages.index', ['posts' => $posts, 'home' => 'active']);
     }
 
     /**

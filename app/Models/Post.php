@@ -71,7 +71,7 @@ class Post extends Model
         $post->s_date = Carbon::createFromFormat('d/m/Y', $fields['s_date'])->format('Y-m-d');
         $post->content = $fields['content'];
         $post->slug = Str::of($fields['title'])->slug('-');
-        $post->status = $fields['status']??0;
+        $post->status = $fields['status'] ?? 0;
         $post->save();
 
         return $post;
