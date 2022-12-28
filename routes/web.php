@@ -67,6 +67,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthAd
     Route::get('/message_mailing_list', '\App\Http\Controllers\Admin\MessageController@mailing_list');
     Route::post('/message_sendMailing', '\App\Http\Controllers\Admin\MessageController@sendMailing');
     Route::get('/message_delete_all', '\App\Http\Controllers\Admin\MessageController@deleteShows');
+    Route::get('/telegram', '\App\Http\Controllers\TelegramController@index')->name('telegram');
+    Route::get('/telegram_write', '\App\Http\Controllers\TelegramController@create');
+    Route::post('/telegram_send', '\App\Http\Controllers\TelegramController@store');
+    Route::get('/telegram_remove/{id}', '\App\Http\Controllers\TelegramController@remove');
+    Route::get('/telegram_update', '\App\Http\Controllers\TelegramController@update');
+    Route::post('/telegram_answer', '\App\Http\Controllers\TelegramController@answer');
+    Route::post('/telegram_sendAnswer', '\App\Http\Controllers\TelegramController@sendAnswer');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthMiddleware', '\App\Http\Middleware\UsersOnlineMiddleware']], function () {

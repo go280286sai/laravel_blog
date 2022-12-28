@@ -46,6 +46,7 @@ class Subscription extends Model
     public static function unscriber($id): mixed
     {
         $uns = new static();
+
         return $uns->where('unset', $id)->delete();
     }
 }

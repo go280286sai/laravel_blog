@@ -28,7 +28,6 @@ class DashboardController extends Controller
         Log::info('Logout: '.Auth::user()->name);
         Auth::logout();
 
-
         return redirect()->route('login');
     }
 }

@@ -62,7 +62,7 @@ class PostsController extends Controller
         $post->setCategory($request->get('category_id'));
         $post->setTags($request->get('tags'));
         $post->toggleFeatured($request->get('is_featured'));
-        Log::info('Create post: '.$request->get('title').' '. Auth::user()->name);
+        Log::info('Create post: '.$request->get('title').' '.Auth::user()->name);
 
         return redirect()->route('posts.index');
     }
@@ -123,7 +123,7 @@ class PostsController extends Controller
         DB::transaction(function () use ($id) {
             Post::find($id)->remove();
             Comment::where('post_id', '=', $id)->delete();
-            Log::info('Delete post: '.$id.' --'. Auth::user()->name);
+            Log::info('Delete post: '.$id.' --'.Auth::user()->name);
         });
 
         return redirect()->route('posts.index');
@@ -152,7 +152,7 @@ class PostsController extends Controller
         $post = Post::all()->find($id);
         $post->comment = $content;
         $post->save();
-        Log::info('Add comment: '.$post->title.' '.$post->comment.' --'. Auth::user()->name);
+        Log::info('Add comment: '.$post->title.' '.$post->comment.' --'.Auth::user()->name);
 
         return redirect()->route('posts.index');
     }
@@ -191,13 +191,13 @@ class PostsController extends Controller
         if ($target == 'trash') {
             $id = $request->get('id');
             Post::onlyTrashed()->where('id', '=', $id)->forceDelete();
-            Log::info('Trash post: '.$id.' --'. Auth::user()->name);
+            Log::info('Trash post: '.$id.' --'.Auth::user()->name);
 
             return redirect()->route('posts_trash');
         } elseif ($target == 'recover') {
             $id = $request->get('id');
             $this->getRecover($id);
-            Log::info('Recover post: '.$id.' --'. Auth::user()->name);
+            Log::info('Recover post: '.$id.' --'.Auth::user()->name);
 
             return redirect()->route('posts_trash');
         } elseif ($target == 'recover_all') {
@@ -205,7 +205,7 @@ class PostsController extends Controller
             foreach ($posts as $post) {
                 $this->getRecover($post->id);
             }
-            Log::info('Recover all posts: '. '--'. Auth::user()->name);
+            Log::info('Recover all posts: '.'--'.Auth::user()->name);
 
             return redirect()->route('posts_trash');
         } elseif ($target == 'trash_all') {
@@ -213,7 +213,7 @@ class PostsController extends Controller
             foreach ($posts as $post) {
                 $this->getTrash($post->id);
             }
-            Log::info('Trash all posts: '.' --'. Auth::user()->name);
+            Log::info('Trash all posts: '.' --'.Auth::user()->name);
 
             return redirect()->route('posts_trash');
         }
@@ -262,7 +262,7 @@ class PostsController extends Controller
     {
         $post = Post::find($id);
         $post->toggleStatus();
-        Log::info('Toggle status: '.$id.' --'. Auth::user()->name);
+        Log::info('Toggle status: '.$id.' --'.Auth::user()->name);
 
         return redirect()->back();
     }

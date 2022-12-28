@@ -44,7 +44,6 @@ return [
     'add_comment' => 'Your comment will be added soon!',
     'you_message_send' => 'You are sending a message',
     'no_category' => 'No category',
-    'no_tags' => 'No tags'
-
+    'no_tags' => 'No tags',
 
 ];

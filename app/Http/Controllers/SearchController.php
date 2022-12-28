@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class SearchController extends Controller
 {
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function index(Request $request): View
@@ -25,7 +25,7 @@ class SearchController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function show(Request $request): View
@@ -37,7 +37,7 @@ class SearchController extends Controller
             $comments = Comment::search($search)->get();
             $subscriptions = Subscription::search($search)->get();
 
-            return view('admin.search.index', ['posts' => $posts, 'users' => $users, 'comments' => $comments, 'subs' => $subscriptions, 'i'=>1]);
+            return view('admin.search.index', ['posts' => $posts, 'users' => $users, 'comments' => $comments, 'subs' => $subscriptions, 'i' => 1]);
         } else {
             $posts = $posts->where('user_id', '=', Auth::user()->id);
 

@@ -2,10 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Mail\MailingList;
 use App\Mail\MailingListSub;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,8 +15,11 @@ class MailingSubJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private string $title;
+
     private string $content;
+
     private string $from;
+
     private array $mails;
 
     /**
@@ -31,7 +32,7 @@ class MailingSubJob implements ShouldQueue
         $this->title = $title;
         $this->content = $content;
         $this->from = $from;
-        $this->mails=$mails;
+        $this->mails = $mails;
     }
 
     /**
@@ -41,7 +42,7 @@ class MailingSubJob implements ShouldQueue
      */
     public function handle()
     {
-        foreach ($this->mails as $mail=>$key) {
+        foreach ($this->mails as $mail => $key) {
             Mail::to($mail)->cc($this->from)->send(new MailingListSub($this->title, $this->content, $key));
         }
     }
