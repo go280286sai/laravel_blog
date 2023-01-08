@@ -74,6 +74,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthAd
     Route::get('/telegram_update', '\App\Http\Controllers\TelegramController@update');
     Route::post('/telegram_answer', '\App\Http\Controllers\TelegramController@answer');
     Route::post('/telegram_sendAnswer', '\App\Http\Controllers\TelegramController@sendAnswer');
+    Route::view('/view_mailing_sub', 'emails.mailing_list_sub', ['title'=>'Constructor', 'content'=>'Some text', 'id'=>'test']);
+    Route::view('/view_mailing', 'emails.mailing_list', ['title'=>'Constructor', 'content'=>'Some text']);
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthMiddleware', '\App\Http\Middleware\UsersOnlineMiddleware']], function () {

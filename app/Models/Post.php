@@ -288,7 +288,7 @@ class Post extends Model
      */
     public function hasPrevious(): mixed
     {
-        return self::where('id', '<', $this->id)->max('id');
+        return self::where('id', '<', $this->id)->where('status', 1)->max('id');
     }
 
     /**
@@ -306,7 +306,7 @@ class Post extends Model
      */
     public function hasNext(): mixed
     {
-        return self::where('id', '>', $this->id)->min('id');
+        return self::where('id', '>', $this->id)->where('status', 1)->min('id');
     }
 
     /**

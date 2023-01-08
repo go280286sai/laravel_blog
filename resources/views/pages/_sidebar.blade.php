@@ -1,18 +1,22 @@
 <div class="col-md-4" data-sticky_column>
-    <div class="primary-sidebar">
+    <div class="primary-sidebar" id="app">
         <aside class="widget news-letter">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red"> {{__('messages.subscription')}}</strong></h3>
+            <h3 class="widget-title text-uppercase text-center"><strong
+                    class="red"> {{__('messages.subscription')}}</strong></h3>
+            <div :class="statusClass" v-if="status">
+            <small v-text="statusText"></small></div>
             <form action="/subscribe" method="post">
-                {{csrf_field()}}
+                @csrf
                 <label>
-                    <input type="email" placeholder="{{__('messages.your_email_address')}}" name="email">
+                    <input type="email" placeholder="{{__('messages.your_email_address')}}" name="email" id="send">
                 </label>
-                <input type="submit" value="{{__('messages.subscribe_now')}}"
+                <input type="submit" @click="sendSubscribe" value="{{__('messages.subscribe_now')}}"
                        class="text-uppercase text-center btn btn-subscribe">
             </form>
         </aside>
         <aside class="widget border pos-padding">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.category')}}</strong></h3>
+            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.category')}}</strong>
+            </h3>
             <ul>
                 @foreach($categories as $category)
                     <li>
@@ -23,7 +27,8 @@
             </ul>
         </aside>
         <aside class="widget">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.popular_posts')}}</strong></h3>
+            <h3 class="widget-title text-uppercase text-center"><strong
+                    class="red">{{__('messages.popular_posts')}}</strong></h3>
             @foreach($popularPosts as $post)
                 <div class="popular-post">
                     <a href="{{route('post.show', $post->slug)}}" class="popular-img"><img src="{{$post->getImage()}}"
@@ -38,7 +43,8 @@
             @endforeach
         </aside>
         <aside class="widget">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.featured_posts')}}</strong></h3>
+            <h3 class="widget-title text-uppercase text-center"><strong
+                    class="red">{{__('messages.featured_posts')}}</strong></h3>
             <div id="widget-feature" class="owl-carousel">
                 @foreach($featuredPosts as $post)
                     <div class="item">
@@ -53,7 +59,8 @@
             </div>
         </aside>
         <aside class="widget pos-padding">
-            <h3 class="widget-title text-uppercase text-center"><strong class="red">{{__('messages.recent_posts')}}</strong></h3>
+            <h3 class="widget-title text-uppercase text-center"><strong
+                    class="red">{{__('messages.recent_posts')}}</strong></h3>
             @foreach($recentPosts as $post)
                 <div class="thumb-latest-posts">
                     <div class="media">
@@ -73,3 +80,51 @@
         </aside>
     </div>
 </div>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                status:false,
+                statusText:'',
+                statusClass:''
+            }
+        },
+        methods: {
+          sendSubscribe(event) {
+                event.preventDefault()
+              let send = $('#send').val()
+              this.statusText=''
+              this.statusClass = 'p_info_ok'
+              const pattern = /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u;
+              if(send.length===0 || !pattern.exec(send)){
+                  this.statusClass = 'p_info_danger'
+                  return this.setStatus('err');
+              }
+                $.ajax({
+                    url: '/subscribe',
+                    type: $('form').attr('method'),
+                    data: $('form').serialize(),
+                }).done(()=>{
+                    this.setStatus('ok')
+                    $('#send').val('')
+                });
+
+            },
+            setStatus(text) {
+                if (text === 'err') {
+                    this.statusText = '{{__('messages.invalid_mail_entered')}}'
+                    return this.getStatus()
+                } else {
+                    this.statusText = '{{__('messages.check_your_mailbox')}}'
+                    return this.getStatus()
+                }
+            },
+            getStatus(){
+              this.status=true
+                setTimeout(()=>{
+                    this.status=false
+                }, 3000);
+            }
+        }
+    }).mount('#app');
+</script>

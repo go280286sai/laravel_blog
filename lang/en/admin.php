@@ -101,5 +101,8 @@ return [
     'username' => 'Login',
     'chat_number' => 'Chat number',
     'message_number' => 'Message number',
+    'template_mailing'=>'Template for users',
+    'template_mailing_sub'=>'Template for subscribers',
+
 
 ];
