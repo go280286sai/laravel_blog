@@ -156,6 +156,10 @@ class ComposerStaticInitf656fdec000c6c727548a55c10c9bad1
             'Laravel\\Breeze\\' => 15,
             'Laminas\\Diactoros\\' => 18,
         ),
+        'K' => 
+        array (
+            'Kudashevs\\ShareButtons\\' => 23,
+        ),
         'I' => 
         array (
             'Illuminate\\Support\\' => 19,
@@ -513,6 +517,10 @@ class ComposerStaticInitf656fdec000c6c727548a55c10c9bad1
         'Laminas\\Diactoros\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-diactoros/src',
+        ),
+        'Kudashevs\\ShareButtons\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src',
         ),
         'Illuminate\\Support\\' => 
         array (
@@ -3465,6 +3473,21 @@ class ComposerStaticInitf656fdec000c6c727548a55c10c9bad1
         'Illuminate\\View\\ViewFinderInterface' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewFinderInterface.php',
         'Illuminate\\View\\ViewName' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewName.php',
         'Illuminate\\View\\ViewServiceProvider' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
+        'Kudashevs\\ShareButtons\\Exceptions\\InvalidProcessedCallArgument' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Exceptions/InvalidProcessedCallArgument.php',
+        'Kudashevs\\ShareButtons\\Exceptions\\InvalidTemplaterFactoryArgument' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Exceptions/InvalidTemplaterFactoryArgument.php',
+        'Kudashevs\\ShareButtons\\Facades\\ShareButtonsFacade' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Facades/ShareButtonsFacade.php',
+        'Kudashevs\\ShareButtons\\Factories\\TemplaterFactory' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Factories/TemplaterFactory.php',
+        'Kudashevs\\ShareButtons\\Presenters\\Formatters\\AttributesFormatter' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Presenters/Formatters/AttributesFormatter.php',
+        'Kudashevs\\ShareButtons\\Presenters\\Formatters\\SimpleAttributesFormatter' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Presenters/Formatters/SimpleAttributesFormatter.php',
+        'Kudashevs\\ShareButtons\\Presenters\\ShareButtonsPresenter' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Presenters/ShareButtonsPresenter.php',
+        'Kudashevs\\ShareButtons\\Presenters\\TemplateShareButtonsPresenter' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Presenters/TemplateShareButtonsPresenter.php',
+        'Kudashevs\\ShareButtons\\Presenters\\TemplateShareButtonsUrlPresenter' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Presenters/TemplateShareButtonsUrlPresenter.php',
+        'Kudashevs\\ShareButtons\\Providers\\ShareButtonsServiceProvider' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Providers/ShareButtonsServiceProvider.php',
+        'Kudashevs\\ShareButtons\\ShareButtons' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/ShareButtons.php',
+        'Kudashevs\\ShareButtons\\Templaters\\LaravelTemplater' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Templaters/LaravelTemplater.php',
+        'Kudashevs\\ShareButtons\\Templaters\\SimpleColonTemplater' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Templaters/SimpleColonTemplater.php',
+        'Kudashevs\\ShareButtons\\Templaters\\Templater' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/Templaters/Templater.php',
+        'Kudashevs\\ShareButtons\\ValueObjects\\ProcessedCall' => __DIR__ . '/..' . '/kudashevs/laravel-share-buttons/src/ValueObjects/ProcessedCall.php',
         'Laminas\\Diactoros\\AbstractSerializer' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/AbstractSerializer.php',
         'Laminas\\Diactoros\\CallbackStream' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/CallbackStream.php',
         'Laminas\\Diactoros\\ConfigProvider' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/ConfigProvider.php',

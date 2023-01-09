@@ -33,11 +33,14 @@
                         <div class="social-share">
                             <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong class="red">{{$post->getDate()}}</strong> </span>
                             <ul class="text-center pull-right">
-                                <li><a class="s-facebook" href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a class="s-twitter" href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a class="s-google-plus" href="#"><i class="fa fa-google-plus"></i></a></li>
-                                <li><a class="s-linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
-                                <li><a class="s-instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
+                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
                             </ul>
                         </div>
                     </div>

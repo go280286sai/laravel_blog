@@ -36,23 +36,14 @@
                                 <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On  <strong
                                         class="red">{{$post->getDate()}}</strong></span>
                                 <ul class="text-center pull-right">
-                                    <li>
-                                        <div class="fb-share-button"
-                                             data-href="{{route('post.show', $post->slug)}}"
-                                             data-layout="button_count">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <button class="fa fa-linkedin"
-                                                onClick='window.open("https://www.linkedin.com/sharing/share-offsite/?url={{route('post.show', $post->slug)}}","sharer","toolbar=0,status=0,width=620,height=390");'
-                                                title="Поделиться в Linkedin"
-                                        ></button>
-                                    </li>
-                                    <li><button
-                                            class="fa"
-                                            onClick='window.open("https://telegram.me/share/url?url={{route('post.show', $post->slug)}}","sharer","status=0,toolbar=0,width=650,height=500");'
-                                            title="Поделиться в Телеграм">
-                                        </button></li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
+                                    <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
                                 </ul>
                             </div>
                             <div class="block_views">
