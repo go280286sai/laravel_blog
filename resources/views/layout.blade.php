@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/style.css'}}">
     <link rel="stylesheet" href="{{env('APP_URL').'/assets/front/css/responsive.css'}}">
     <script src="https://unpkg.com/vue@next"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 @section('style')
     @show
 
@@ -44,7 +45,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav text-uppercase">
                     <li><a href="/"><i @if($home??false)class="red" @endif>{{__('messages.homepage')}}</i></a></li>
-                    <li><a href="#"><i @if($me??false)class="red" @endif>{{__('messages.about_me')}}</i></a></li>
+                    <li><a href="/about"><i @if($me??false)class="red" @endif>{{__('messages.about_me')}}</i></a></li>
                     <li><a href="/contact"><i @if($contact??false)class="red" @endif>{{__('messages.contact')}}</i></a></li>
                 </ul>
                 <ul class="nav navbar-nav text-uppercase pull-right">
@@ -225,6 +226,8 @@
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery.stickit.min.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
+<script type="text/javascript" src="{{env('APP_URL').'/assets/js/share-buttons.js'}}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
 @section('js')
 @show
 

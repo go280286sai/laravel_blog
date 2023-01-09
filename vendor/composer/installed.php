@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '731cc5196db7b366f2efd2e24369b82c573a3575',
+        'reference' => '88195335439d9fd397fbc0652e2a1a9e91792e86',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -418,6 +418,15 @@
                 0 => '*',
             ),
         ),
+        'kudashevs/laravel-share-buttons' => array(
+            'pretty_version' => 'v3.1.0',
+            'version' => '3.1.0.0',
+            'reference' => '396d20586309245d735742cac290a321bf51595f',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../kudashevs/laravel-share-buttons',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'laminas/laminas-diactoros' => array(
             'pretty_version' => '2.23.0',
             'version' => '2.23.0.0',
@@ -448,7 +457,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '731cc5196db7b366f2efd2e24369b82c573a3575',
+            'reference' => '88195335439d9fd397fbc0652e2a1a9e91792e86',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -182,6 +182,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         \App\Providers\TelegramProvider::class,
+        Kudashevs\ShareButtons\Providers\ShareButtonsServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -209,9 +210,9 @@ return [
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
-
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+    'ShareButtons' => Kudashevs\ShareButtons\Facades\ShareButtonsFacade::class,
     ])->toArray(),
 
 ];
