@@ -16,8 +16,13 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $posts = Post::where('status', '=', 1)->orderByDesc('id')->cursorPaginate(2);
-
+        $date = Carbon::now();
+        if (Cache::has('home')) {
+            $posts = Cache::get('home');
+        } else {
+            $posts = Post::where('status', '=', 1)->where('s_date', '<=', $date)->orderByDesc('id')->cursorPaginate(2);
+            Cache::put('home', $posts);
+        }
         return view('pages.index', ['posts' => $posts, 'home' => 'active']);
     }
 
@@ -35,7 +40,7 @@ class HomeController extends Controller
         if (Cache::has($slug) && in_array($_SERVER['REMOTE_ADDR'], $ip)) {
             Cache::increment($slug);
             $ip[] = $_SERVER['REMOTE_ADDR'];
-        } elseif (! Cache::has($slug)) {
+        } elseif (!Cache::has($slug)) {
             Cache::add($slug, 1, $date);
             $ip[] = $_SERVER['REMOTE_ADDR'];
         }

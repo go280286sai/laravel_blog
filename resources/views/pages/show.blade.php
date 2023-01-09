@@ -36,15 +36,23 @@
                                 <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On  <strong
                                         class="red">{{$post->getDate()}}</strong></span>
                                 <ul class="text-center pull-right">
-                                    <li><a class="s-facebook" href="{{route('auth.facebook')}}"><i
-                                                class="fa fa-facebook"></i></a></li>
-                                    <li><a class="ion-social-github" href="{{route('auth.github')}}"><i
-                                                class="fa fa-github"></i></a></li>
-                                    <li><a class="s-google-plus" id="shareBtn"
-                                           href="{{route('post.show', $post->slug)}}"><i class="fa fa-google-plus"></i></a>
+                                    <li>
+                                        <div class="fb-share-button"
+                                             data-href="{{route('post.show', $post->slug)}}"
+                                             data-layout="button_count">
+                                        </div>
                                     </li>
-                                    <li><a class="s-linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a class="s-instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+                                    <li>
+                                        <button class="fa fa-linkedin"
+                                                onClick='window.open("https://www.linkedin.com/sharing/share-offsite/?url={{route('post.show', $post->slug)}}","sharer","toolbar=0,status=0,width=620,height=390");'
+                                                title="Поделиться в Linkedin"
+                                        ></button>
+                                    </li>
+                                    <li><button
+                                            class="fa"
+                                            onClick='window.open("https://telegram.me/share/url?url={{route('post.show', $post->slug)}}","sharer","status=0,toolbar=0,width=650,height=500");'
+                                            title="Поделиться в Телеграм">
+                                        </button></li>
                                 </ul>
                             </div>
                             <div class="block_views">
@@ -97,22 +105,22 @@
                     </div>
                     <!--blog next previous end-->
 
-                        @foreach($post->getComments() as $comment)
-                            <div class="bottom-comment">
-                                <!--bottom comment-->
-                                <div class="comment-img">
-                                    <img class="img-circle" src="{{$comment->user->getAvatar()}}" alt="" width="75"
-                                         height="75">
-                                </div>
-                                <div class="comment-text">
-                                    <h5>{{$comment->user->name}}</h5>
-                                    <p class="comment-date">
-                                        {{$comment->created_at->diffForHumans()}}
-                                    </p>
-                                    <p class="para">{{$comment->text}}</p>
-                                </div>
+                    @foreach($post->getComments() as $comment)
+                        <div class="bottom-comment">
+                            <!--bottom comment-->
+                            <div class="comment-img">
+                                <img class="img-circle" src="{{$comment->user->getAvatar()}}" alt="" width="75"
+                                     height="75">
                             </div>
-                        @endforeach
+                            <div class="comment-text">
+                                <h5>{{$comment->user->name}}</h5>
+                                <p class="comment-date">
+                                    {{$comment->created_at->diffForHumans()}}
+                                </p>
+                                <p class="para">{{$comment->text}}</p>
+                            </div>
+                        </div>
+                    @endforeach
 
 
                     <!-- end bottom comment-->
@@ -128,7 +136,8 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
     										<textarea class="form-control" rows="6" name="message"
-                                                      placeholder="{{__('messages.write_text')}}" id="write_message"></textarea>
+                                                      placeholder="{{__('messages.write_text')}}"
+                                                      id="write_message"></textarea>
                                     </div>
                                 </div>
                                 <button @click="addComment"
@@ -195,4 +204,12 @@
             }
         }).mount('#show')
     </script>
+    <script>(function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
 @endsection

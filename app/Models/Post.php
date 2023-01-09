@@ -340,7 +340,7 @@ class Post extends Model
      */
     public static function getPopularPosts(): mixed
     {
-        return self::orderBy('views', 'desc')->take(3)->get();
+        return self::where('status', 1)->orderBy('views', 'desc')->take(3)->get();
     }
 
     /**
@@ -349,5 +349,16 @@ class Post extends Model
     public function getComments(): Collection
     {
         return $this->comments()->where('status', 1)->get();
+    }
+
+    /**
+     * @param string $url Absolute URL to share, e.g. "https://example.com/path/to/article?with=params"
+     * @param string $text Optional comment to share URL with, e.g. "Check out this article!"
+     * @return string Button HTML markup, feel free to modify to your taste
+     */
+    public static function telegramForwardButton(string $url, string $text = ''): string
+    {
+        $share_url = 'https://t.me/share/url?url='.$url.'&text='.$text;
+        return "<a href='{$share_url}'>Share</a>";
     }
 }
