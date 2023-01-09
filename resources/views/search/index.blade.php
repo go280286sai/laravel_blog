@@ -30,19 +30,7 @@
                                 <a href="{{route('post.show', $post->slug)}}" class="more-link">{{__('messages.continue_reading')}}</a>
                             </div>
                         </div>
-                        <div class="social-share">
-                            <span class="social-share-title pull-left text-capitalize">By <a href="#">{{$post->user->name}}</a> On <strong style="color: red">{{$post->getDate()}}</strong> </span>
-                            <ul class="text-center pull-right">
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
-                                <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
-                            </ul>
-                        </div>
+                        @include('pages.social')
                     </div>
                 </article>
                 @endforeach
