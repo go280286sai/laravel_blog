@@ -1,11 +1,11 @@
 <div class="col-md-4" data-sticky_column>
-    <div class="primary-sidebar" id="app">
+    <div class="primary-sidebar" id="sub">
         <aside class="widget news-letter">
             <h3 class="widget-title text-uppercase text-center"><strong
                     class="red"> {{__('messages.subscription')}}</strong></h3>
             <div :class="statusClass" v-if="status">
             <small v-text="statusText"></small></div>
-            <form action="/subscribe" method="post">
+            <form action="/subscribe" method="post" id="subs">
                 @csrf
                 <label>
                     <input type="email" placeholder="{{__('messages.your_email_address')}}" name="email" id="send">
@@ -97,25 +97,32 @@
               this.statusClass = 'p_info_ok'
               const pattern = /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u;
               if(send.length===0 || !pattern.exec(send)){
-                  this.statusClass = 'p_info_danger'
                   return this.setStatus('err');
               }
                 $.ajax({
                     url: '/subscribe',
-                    type: $('form').attr('method'),
-                    data: $('form').serialize(),
+                    type: $('#subs').attr('method'),
+                    data: $('#subs').serialize(),
                 }).done(()=>{
                     this.setStatus('ok')
                     $('#send').val('')
+                }).fail(err=>{
+                    this.setStatus(err.responseJSON.message)
                 });
 
             },
             setStatus(text) {
                 if (text === 'err') {
+                    this.statusClass = 'p_info_danger'
                     this.statusText = '{{__('messages.invalid_mail_entered')}}'
                     return this.getStatus()
-                } else {
+                }
+                else if (text === 'ok') {
                     this.statusText = '{{__('messages.check_your_mailbox')}}'
+                    return this.getStatus()
+                } else {
+                    this.statusText = text;
+                    this.statusClass = 'p_info_danger'
                     return this.getStatus()
                 }
             },
@@ -126,5 +133,5 @@
                 }, 3000);
             }
         }
-    }).mount('#app');
+    }).mount('#sub');
 </script>

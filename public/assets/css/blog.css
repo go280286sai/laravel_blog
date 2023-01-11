@@ -55,11 +55,9 @@
     color: white;
     text-align: center;
     padding-top: 5px;
-    border-radius: 20%;
 }
 .github_div:hover{
     color: white;
     background-color: #0d6aad;
     text-decoration: none;
-    border-radius: 5%;
 }

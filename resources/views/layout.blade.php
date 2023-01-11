@@ -220,6 +220,7 @@
     </div>
 </footer>
 <!-- js files -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/bootstrap.min.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/owl.carousel.min.js'}}"></script>
@@ -227,7 +228,6 @@
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/menu.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/scripts.js'}}"></script>
 <script type="text/javascript" src="{{env('APP_URL').'/assets/js/share-buttons.js'}}"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
 @section('js')
 @show
 
