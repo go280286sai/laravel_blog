@@ -284,11 +284,64 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 Устанавливаем значение token в null, и генерируем еще одно значение unset для возможности отписаться от рассылки.
 
 
+
 ## Система поиска
 
 ## Телеграмм
+## Почта
+Вся входящая почта отображается у администратора, пункт email. 
+
+Количество не прочитанных сообщений
+App>Providers>AppServiceProvider.php>финкция boot
+
+    view()->composer('admin.layouts', function ($view) {
+    if (Auth::user()->is_admin) {
+    $comments = DB::select('SELECT count(comments.status) as status FROM comments INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL AND comments.deleted_at is null and comments.status=0;');
+    $mail = Message::where('status', '=', 0)->count();
+    return $view->with(['newCommentsCount' => $comments[0]->status, 'mail_count' => $mail]);
+    } 
+    });
+
+Загружаются списком, отсортированным по дате и статусу. Новые отображаются розовым цветом.
+![](./storage/read/message_1.png)
+Можно удалить все просмотренные или выборочно. 
+
+    public function deleteShows(): RedirectResponse
+    {
+    $shows = Message::where('status', 1)->delete();
+    Log::info('Delete all read messages: '.Auth::user()->name);
+    return back();
+        }
+
+С помощью ajax меняем статус сообщения:
+
+    $.ajax({
+    url: "{{env('APP_URL').'/admin/messages/'.$message->id}}",
+    type: "put",
+    data: $('form').serialize(),
+    }
+    )
+
+    public function update(Request $request, int $id): RedirectResponse
+    {
+    $message = Message::find($id);
+    $message->status = 1;
+    $message->save();
+    Log::info('Message status read: '.$message->title.' '.Auth::user()->name);
+    return back();
+        }
+
+В нутри каждого письма есть кнопка для ответа пользователю:
+
+    public function setAnswer(Request $request): Application|RedirectResponse|Redirector
+    {
+    Mail::to($request->email)->cc(Auth::user()->email)->send(new answer_email($request->all()));
+    Log::info('Answer the message: '.$request->email.' '.$request->title.' --'.Auth::user()->name);
+    return redirect('/admin/messages');
+        }
 
 ## Почтовая рассылка
+Рассылка выполняется отдельно как для подписчиков так и для пользователей сайта.
 
 ## Телескоп
 

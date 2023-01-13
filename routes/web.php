@@ -45,6 +45,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthAd
     Route::resource('/tags', '\App\Http\Controllers\Admin\TagsController');
     Route::resource('/categories', '\App\Http\Controllers\Admin\CategoriesController');
     Route::resource('/subscribers', '\App\Http\Controllers\Admin\SubscribersController');
+    Route::resource('/users', '\App\Http\Controllers\Admin\UsersController');
     Route::post('/user_comment', '\App\Http\Controllers\Admin\UsersController@viewCommentUser');
     Route::post('/add_comment_user', '\App\Http\Controllers\Admin\UsersController@addCommentUser');
     Route::post('/viewMailUser', '\App\Http\Controllers\Admin\UsersController@viewMailUser');
@@ -84,7 +85,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['\App\Http\Middleware\AuthMi
     Route::get('/comments', '\App\Http\Controllers\Admin\CommentsController@index');
     Route::get('/comments/toggle/{id}', '\App\Http\Controllers\Admin\CommentsController@toggle');
     Route::get('/posts/toggle/{id}', '\App\Http\Controllers\Admin\PostsController@toggle');
-    Route::resource('/users', '\App\Http\Controllers\Admin\UsersController');
     Route::delete('/comments/{id}/destroy', '\App\Http\Controllers\Admin\CommentsController@destroy')->name('comments.destroy');
     Route::get('/dashboard', '\App\Http\Controllers\Admin\DashboardController@index');
     Route::get('/profile', '\App\Http\Controllers\Admin\ProfileController@index');

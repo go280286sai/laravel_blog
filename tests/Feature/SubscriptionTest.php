@@ -17,9 +17,8 @@ class SubscriptionTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_subscription()
     {
-        Session::start();
         $response = $this->call('POST', '/subscribe', array(
             '_token' => csrf_token(), 'email'=>'admin@admin.ua'
         ));

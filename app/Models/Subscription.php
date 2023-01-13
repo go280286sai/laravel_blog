@@ -27,7 +27,6 @@ class Subscription extends Model
         $sub->email = $email;
         $sub->token = Str::random(100);
         $sub->save();
-
         return $sub;
     }
 
