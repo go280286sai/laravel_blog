@@ -298,11 +298,44 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 
 ![](./storage/read/sub_2.png)
 ## Система поиска
+Реализация с помощью MeiliSearch
+
+Прописываем use Searchable; в тех моделях которые хотим задействовать.
+
+Выполняем импорт модели 
+
+    php artisan scout:import "App\Models\Post"
+
+На клиентской части поиск выполняется только по статьям:
+
+    public function index(Request $request): View
+    {
+    $search = $request->get('search');
+    $posts = Post::search($search)->get();
+    return view('search.index', ['posts' => $posts]);
+        }
+
+У администратора поис выполняется по всему содержимому сайта:
+
+    public function show(Request $request): View
+    {
+    $search = $request->get('search');
+    $posts = Post::search($search)->get();
+    if (Auth::user()->is_admin) {
+    $users = User::search($search)->get();
+    $comments = Comment::search($search)->get();
+    $subscriptions = Subscription::search($search)->get();
+    return view('admin.search.index', ['posts' => $posts, 'users' => $users, 'comments' => $comments, 'subs' => $subscriptions, 'i' => 1]);
+    } else {
+    $posts = $posts->where('user_id', '=', Auth::user()->id);
+    return view('admin.search.index', ['posts' => $posts]);
+    }
+        }
 
 ## Телеграмм
-
 Отправка сообщения админу через бота.
 Используется "defstudio/telegraph": "^1.28". После установке создаем две БД:
+
     class telegraph_bots {
     varchar(255) token
     varchar(255) name
