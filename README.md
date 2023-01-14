@@ -283,13 +283,129 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 
 Устанавливаем значение token в null, и генерируем еще одно значение unset для возможности отписаться от рассылки.
 
+На вкладке Подписчики у администратора отображается список всех подписчиков и их статус,
+возможность удалить вручную.
 
+    public function destroy(int $id): RedirectResponse
+    {
+    Subscription::all()->find($id)->remove();
+    if (Gate::denies('subscription', Subscription::class)) {
+    abort(404);
+    }
+    Log::info('Delete email: '.Auth::user()->name);
+    return redirect('/admin/subscribers');
+        }
 
+![](./storage/read/sub_2.png)
 ## Система поиска
 
 ## Телеграмм
 
+Отправка сообщения админу через бота.
+Используется "defstudio/telegraph": "^1.28". После установке создаем две БД:
+    class telegraph_bots {
+    varchar(255) token
+    varchar(255) name
+    timestamp created_at
+    timestamp updated_at
+    bigint unsigned id
+    }
 
+    class telegraph_chats {
+    varchar(255) chat_id
+    varchar(255) name
+    bigint unsigned telegraph_bot_id
+    timestamp created_at
+    timestamp updated_at
+    bigint unsigned id
+    }
+
+где, указываем номер API, номер чата.
+
+    public static function getMessages(): mixed
+    {
+    $chat = TelegraphBot::find(1);
+    return $chat->updates();
+        }
+
+Позволяет нам получать сообщения из нашего чата.
+
+Получать мы можем автоматически, используюя job:
+
+    public function handle()
+    {
+    Telegram::add(Chat::getMessages());
+    }
+
+Пропишим в Kernel:
+    protected function schedule(Schedule $schedule)
+    {
+    $schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
+    }
+
+Или в ручную вызвав на вкладке Telegram функцию обновить:
+
+    public function update(): RedirectResponse
+    {
+    Telegram::add(Chat::getMessages());
+    Log::info('Update telegram messages');
+    return redirect()->route('telegram');
+        }
+
+Распарсим наши сообщения и добавим в БД для дальнейшей обработки:
+
+    public static function add(object $fields): void
+    {
+    $telegram = new static();
+    $last_id = static::latest()->get()[0]->message_id;
+    foreach ($fields as $item) {
+    if ($last_id < $item->message()->id()) {
+    $telegram->update_id = $item->id();
+    $telegram->message_id = $item->message()->id();
+    $telegram->from_id = $item->message()->from()->id();
+    $telegram->first_name = $item->message()->from()->firstname();
+    $telegram->last_name = $item->message()->from()->lastname();
+    $telegram->username = $item->message()->from()->username();
+    $telegram->chat_id = $item->message()->chat()->id();
+    $telegram->send_date = $item->message()->date();
+    $telegram->text = $item->message()->text();
+    $telegram->save();
+    }
+    }
+    }
+
+Полученные сообщения отображаются на вкладке Telegram у администратора в виде списка.
+Есть возможность отправить ответ с сохранением его в БД или удалить сообщение.
+
+![](./storage/read/telegram_1.png)
+
+Также есть группа, с возможностью отправления сообщения, фото, документов.
+
+![](./storage/read/telegram_2.png)
+
+    public function store(Request $request): RedirectResponse
+    {
+    if ($request->get('content')) {
+    $content = str_replace(['<p>', '</p>'], '', $request->get('content'));
+    } else {
+    $content = '';
+    }
+    if ($request->get('title')) {
+    $title = $request->get('title');
+    $text = "<b>$title</b>\n $content";
+    Chat::sendMessage($text);
+    Log::info('Send telegram message: '.$title.' - '.$text);
+    }
+    if ($request->file('photo')) {
+    Chat::sendPhoto($request->file('photo'));
+    Log::info('Send telegram photo');
+    }
+    if ($request->file('doc')) {
+    Chat::sendDocument($request->file('doc'));
+    Log::info('Send telegram document');
+    }
+    return redirect()->route('telegram');
+        }
 ## Почта
 Вся входящая почта отображается у администратора, пункт email. 
 
@@ -444,3 +560,64 @@ Unit test
     }
     }
 ## Комментарии
+
+Отображаются как у пользователя так и у администратора. 
+
+    public function index(): View
+    {
+    if (Auth::user()->is_admin) {
+    $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
+    INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL
+    AND comments.deleted_at is null order by comments.status;');
+    } else {
+    $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
+    INNER JOIN posts on comments.post_id=posts.id where posts.user_id=? and posts.deleted_at is NULL
+    AND comments.deleted_at is null
+    order by comments.status;', [Auth::user()->id]);
+    }
+    if (Gate::denies('comment', $comments)) {
+    abort(404);
+    }
+    return view('admin.comments.index', ['comments' => $comments, 'i' => 1]);
+        }
+
+Администратор может утверждать, удалять или восстанавливать все комментарии блога,
+а пользователь утверждать или удалять только те, которые относятся к его статье.
+
+![](./storage/read/comment_1.png)
+
+    public function allow(): void
+    {
+    $this->status = 1;
+    $this->save();
+    }
+
+    public function disAllow(): void
+    {
+        $this->status = 0;
+        $this->save();
+    }
+
+    public function toggleStatus()
+    {
+        if ($this->status == 0) {
+            return $this->allow();
+        }
+
+        return $this->disAllow();
+    }
+
+![](./storage/read/comment_2.png)
+
+Unit test:
+
+    public function test_comments()
+    {
+    $comment=CommentFactory::new()->make();
+    $this->assertEquals(0, $comment->status);
+    $comment->toggleStatus();
+    $this->assertEquals(1, $comment->status);
+    $comment->toggleStatus();
+    $this->assertEquals(0, $comment->status);
+    }
+
