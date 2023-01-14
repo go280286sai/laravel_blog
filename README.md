@@ -654,3 +654,90 @@ Unit test:
     $this->assertEquals(0, $comment->status);
     }
 
+## Пользователи
+После регистрации пользователя, нужно подтвердить email. Иначе дальнейшая работа будет 
+только в ограниченной режиме. Возможность публикации статьи будет временно отключена.
+
+Возможность изменить свои контактные данные есть во вкладке Профиль.
+
+У администратора отображаются все пользователи блога в виде списка.
+![](./storage/read/user_1.png)
+
+Через middleware реализована возможность просмотра кто онлайн:
+
+    public function handle(Request $request, Closure $next)
+    {
+    if (Auth::check()) {
+    $data = Carbon::now()->addMinutes(5);
+    Cache::add(Auth::user()->id, Auth::user()->id, $data);
+    }
+    return $next($request);
+        }
+
+Отправка письма пользователю:
+
+    public function sendMailUser(Request $request): RedirectResponse
+    {
+    Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
+    Log::info('Send email user: '.$request->email.' '.$request->get('content').' --'.Auth::user()->name);
+    return redirect()->route('users.index');
+        }
+
+Записать комментарий для себя о пользователе:
+
+    public function addCommentUser(Request $request): RedirectResponse
+    {
+    $id = $request->get('id');
+    $content = $request->get('content');
+    $user = User::find($id);
+    $user->comment = $content;
+    $user->save();
+    Log::info('Create comment user: '.$user->name.' '.$content.' --'.Auth::user()->name);
+    return redirect()->route('users.index');
+        }
+
+Временно заблокировать пользователя:
+
+    public function ban(): void
+    {
+        $this->status = 0;
+        $this->save();
+    }
+
+    public function unban(): void
+    {
+        $this->status = 1;
+        $this->save();
+    }
+
+    public function toggleBan($value)
+    {
+        if ($value == 0) {
+            return $this->unban();
+        }
+        return $this->ban();
+    }
+
+Unit test:
+
+    public function test_user()
+    {
+    $user = UserFactory::new()->make();
+    $user->gender_id = 0;
+    $user->name = 'Test';
+    $user->birthday = '2001-01-01';
+    $user->phone = 12345678;
+    $user->myself = 'This is test';
+    $this->assertEquals(0, $user->gender);
+    $this->assertEquals('Test', $user->name);
+    $this->assertEquals('2001-01-01', $user->birthday);
+    $this->assertEquals('12345678', $user->phone);
+    $this->assertEquals('This is test', $user->myself);
+    $password = $user->password;
+    $user->generatePassword('0000');
+    $this->assertNotEquals($password, $user->password);
+    $user->toggleBan($user->status);
+    $this->assertEquals('0', $user->status);
+    $user->toggleBan($user->status);
+    $this->assertEquals('1', $user->status);
+    }
