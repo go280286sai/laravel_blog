@@ -288,6 +288,8 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 ## Система поиска
 
 ## Телеграмм
+
+
 ## Почта
 Вся входящая почта отображается у администратора, пункт email. 
 
@@ -343,6 +345,61 @@ App>Providers>AppServiceProvider.php>финкция boot
 ## Почтовая рассылка
 Рассылка выполняется отдельно как для подписчиков так и для пользователей сайта.
 
+Есть возможность просмотра шаблона сообщения для редактирования.
+
+![](./storage/read/message_2.png)
+
+    public function sendMailing(Request $request): RedirectResponse
+    {
+    $content = $request->get('content');
+    $title = $request->get('title');
+    $mailing = $request->get('mailing');
+    $from = Auth::user()->email;
+    if ($mailing == 'for_users') {
+    $mails = User::pluck('email')->all();
+    MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
+    Log::info('Mailing for users: '.Auth::user()->name);
+    } elseif ($mailing == 'for_subscription') {
+    $mails = Subscription::where('unset', '!=', 'null')->pluck('unset', 'email')->toArray();
+    MailingSubJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
+    Log::info('Mailing for subscription: '.Auth::user()->name);
+    }
+
+Отправку делаем через MailingJob добавляя в очередь onQueue('mailing'):
+
+    public function handle()
+    {
+    foreach ($this->mails as $mail) {
+    Mail::to($mail)->cc($this->from)->send(new MailingList($this->title, $this->content));
+    }
+    }
+
+![](./storage/read/message_3.png)
+
+При рассылке подписчикам передается в тело письма данные поля unset в виде id.
+![](./storage/read/message_4.png)
+
+Формируем строку для отписки.
+
+    public function unsets(Request $request): RedirectResponse
+    {
+    if (Subscription::unscriber($request->get('email'))) {
+    Log::info('Unscriber email');
+    return redirect('/')->with('status', __('messages.successfully_unsubscribed'));
+    }
+    Log::info('Error unscriber email');
+    return redirect('/')->with('status', __('messages.you_are_not_subscribed'));
+        }
+
+В модели Subscription:
+
+    public static function unscriber($id): mixed
+    {
+    $uns = new static();
+    return $uns->where('unset', $id)->delete();
+        }
+
+![](./storage/read/message_5.png)
 ## Телескоп
 
 ## Мультиязычность

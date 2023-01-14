@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('telescope:prune')->daily();
         $schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
+        $schedule->command('queue:work')->everyMinute();
     }
 
     /**
