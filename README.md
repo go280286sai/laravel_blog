@@ -245,7 +245,6 @@
 
 ## Регистрация через facebook, github
 
-## Работа с пользователями
 
 ## Подписка
 ![](./storage/read/subscription.png)
@@ -549,7 +548,6 @@ App>Providers>AppServiceProvider.php>финкция boot
         }
 
 ![](./storage/read/message_5.png)
-## Телескоп
 
 ## Мультиязычность
 
@@ -741,3 +739,5 @@ Unit test:
     $user->toggleBan($user->status);
     $this->assertEquals('1', $user->status);
     }
+
+регистрация, поделится, с пом соц сетей, посты, телескоп, просматривают, удаление
