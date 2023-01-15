@@ -245,8 +245,8 @@
 
 ## Регистрация через facebook, github
 
-
 ## Подписка
+
 ![](./storage/read/subscription.png)
 
 В web добавляем:
@@ -296,12 +296,14 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
         }
 
 ![](./storage/read/sub_2.png)
+
 ## Система поиска
+
 Реализация с помощью MeiliSearch
 
 Прописываем use Searchable; в тех моделях которые хотим задействовать.
 
-Выполняем импорт модели 
+Выполняем импорт модели
 
     php artisan scout:import "App\Models\Post"
 
@@ -332,6 +334,7 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
         }
 
 ## Телеграмм
+
 Отправка сообщения админу через бота.
 Используется "defstudio/telegraph": "^1.28". После установке создаем две БД:
 
@@ -370,10 +373,10 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
     }
 
 Пропишим в Kernel:
-    protected function schedule(Schedule $schedule)
-    {
-    $schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
-    }
+protected function schedule(Schedule $schedule)
+{
+$schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
+}
 
 Или в ручную вызвав на вкладке Telegram функцию обновить:
 
@@ -438,8 +441,10 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
     }
     return redirect()->route('telegram');
         }
+
 ## Почта
-Вся входящая почта отображается у администратора, пункт email. 
+
+Вся входящая почта отображается у администратора, пункт email.
 
 Количество не прочитанных сообщений
 App>Providers>AppServiceProvider.php>финкция boot
@@ -454,7 +459,7 @@ App>Providers>AppServiceProvider.php>финкция boot
 
 Загружаются списком, отсортированным по дате и статусу. Новые отображаются розовым цветом.
 ![](./storage/read/message_1.png)
-Можно удалить все просмотренные или выборочно. 
+Можно удалить все просмотренные или выборочно.
 
     public function deleteShows(): RedirectResponse
     {
@@ -491,6 +496,7 @@ App>Providers>AppServiceProvider.php>финкция boot
         }
 
 ## Почтовая рассылка
+
 Рассылка выполняется отдельно как для подписчиков так и для пользователей сайта.
 
 Есть возможность просмотра шаблона сообщения для редактирования.
@@ -560,6 +566,7 @@ App>Providers>AppServiceProvider.php>финкция boot
     App::setLocale($lang);
         return $next($request);
     }
+
 При загрузке сайта выполняется проверка на наличие значения 'lang' из кеша
 и присваивается по умолчанию 'uk'. После чего присвоенное значение устанавливается как локальное.
 
@@ -573,7 +580,7 @@ App>Providers>AppServiceProvider.php>финкция boot
         return back();
         });
 
-При смене языка проискодит проверка наличия в допустимых и заносится новое значение в 
+При смене языка проискодит проверка наличия в допустимых и заносится новое значение в
 кеш.
 
 Unit test
@@ -590,9 +597,10 @@ Unit test
     $this->assertEquals(400, $response->getStatusCode());
     }
     }
+
 ## Комментарии
 
-Отображаются как у пользователя так и у администратора. 
+Отображаются как у пользователя так и у администратора.
 
     public function index(): View
     {
@@ -653,7 +661,8 @@ Unit test:
     }
 
 ## Пользователи
-После регистрации пользователя, нужно подтвердить email. Иначе дальнейшая работа будет 
+
+После регистрации пользователя, нужно подтвердить email. Иначе дальнейшая работа будет
 только в ограниченной режиме. Возможность публикации статьи будет временно отключена.
 
 Возможность изменить свои контактные данные есть во вкладке Профиль.
@@ -740,4 +749,185 @@ Unit test:
     $this->assertEquals('1', $user->status);
     }
 
-регистрация, поделится, с пом соц сетей, посты, телескоп, просматривают, удаление
+
+
+## Безопасное удаление
+
+Добавляем в миграцию поле **$table->softDeletes()** для users, comments, subscriptions, posts.
+
+В моделях дописываем **use SoftDeletes;**
+
+Администратор может воccтановить удаленные записи или удалить их окончательно.
+
+![](./storage/read/soft_delete_1.png)
+
+    public function recover(Request $request)
+    {
+    $target = $request->get('target');
+    if ($target == 'trash') {
+    $id = $request->get('id');
+    $this->getTrash($id);
+    Log::info('Trash user: '.$id.' --'.Auth::user()->name);
+            return redirect()->route('users_trash');
+        } elseif ($target == 'recover') {
+            $id = $request->get('id');
+            $this->getRecover($id);
+            Log::info('Recover user: '.$id.' --'.Auth::user()->name);
+
+            return redirect()->route('users_trash');
+        } elseif ($target == 'recover_all') {
+            $users = User::onlyTrashed()->get();
+            foreach ($users as $user) {
+                $this->getRecover($user->id);
+            }
+            Log::info('Recover all users: '.' --'.Auth::user()->name);
+
+            return redirect()->route('users_trash');
+        } elseif ($target == 'trash_all') {
+            $users = User::onlyTrashed()->get();
+            foreach ($users as $user) {
+                $this->getTrash($user->id);
+            }
+            Log::info('Trash all users: '.' --'.Auth::user()->name);
+
+            return redirect()->route('users_trash');
+        }
+    }
+
+    public function trash(Request $request): View
+    {
+        $trash = User::onlyTrashed()->get();
+
+        return view('admin.users.trash', ['trash' => $trash]);
+    }
+
+    public function getRecover($id): void
+    {
+        DB::transaction(function () use ($id) {
+            $posts = Post::onlyTrashed()->where('user_id', '=', $id)->get('id');
+            foreach ($posts as $post) {
+                Comment::onlyTrashed()->where('post_id', '=', $post->id)->restore();
+            }
+            Post::onlyTrashed()->where('user_id', '=', $id)->restore();
+            User::onlyTrashed()->where('id', '=', $id)->restore();
+        });
+    }
+
+    public function getTrash($id): void
+    {
+        DB::transaction(function () use ($id) {
+            $posts = Post::onlyTrashed()->where('user_id', '=', $id)->get('id');
+            foreach ($posts as $post) {
+                Comment::onlyTrashed()->where('post_id', '=', $post->id)->forceDelete();
+            }
+            Post::onlyTrashed()->where('user_id', '=', $id)->forceDelete();
+            User::onlyTrashed()->where('id', '=', $id)->forceDelete();
+        });
+    }
+
+При удалении пользователя удаляются посты этого пользователя и комментарии которые оставлены под этими постами.
+
+Также при востановлении пользователя, восстанавливаются посты и комментарии тоже.
+
+Отдельно можно удалять посты и комментарии.
+
+    public function getRecover($id): void
+    {
+        DB::transaction(function () use ($id) {
+            Comment::onlyTrashed()->where('post_id', '=', $id)->restore();
+            Post::onlyTrashed()->where('id', '=', $id)->restore();
+        });
+    }
+
+    public function getTrash($id): void
+    {
+        DB::transaction(function () use ($id) {
+            Comment::onlyTrashed()->where('post_id', '=', $id)->forceDelete();
+            Post::onlyTrashed()->where('id', '=', $id)->forceDelete();
+        });
+    }
+
+## Посты
+
+![](./storage/read/post_2.png)
+
+Пост изначально создается в статусе черновика, с возможность указать дату публикации поста.
+После чего можно активировать(при подтверждении email) его или деактивировать.
+
+    public function setDraft(): void
+    {
+        $this->status = 0;
+        $this->save();
+    }
+
+    public function setPublic(): void
+    {
+        $this->status = 1;
+        $this->save();
+    }
+
+    public function toggleStatus()
+    {
+        if ($this->status == 1) {
+            return $this->setDraft();
+        }
+
+        return $this->setPublic();
+    }
+
+Администратор имеет полный список всех постов в блоге.
+![](./storage/read/post_1.png)
+
+Может создать или восстановить пост, который был удален или удалить навсегда.
+
+Может активировать или деактивировать пост. 
+
+Написать комментарий к посту:
+
+    public function addCommentPost(Request $request): RedirectResponse
+    {
+        $id = $request->get('id');
+        $content = $request->get('content');
+        $post = Post::all()->find($id);
+        $post->comment = $content;
+        $post->save();
+        Log::info('Add comment: '.$post->title.' '.$post->comment.' --'.Auth::user()->name);
+            return redirect()->route('posts.index');
+        }
+
+Отправить письмо автору поста:
+
+    public function sendMailPost(Request $request): RedirectResponse
+    {
+        Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
+        Log::info('Send mail: '.$request->get('email').' '.$request->get('title').' --'.Auth::user()->name);
+        return redirect()->route('posts.index');
+        }
+
+Имеется счетчик просмотров поста:
+
+    $post->views += 1;
+
+Изменть содержимое статьи может только автор:
+
+    PostPolicy
+    public function update(User $user, Post $post): bool
+    {
+    return $user->id === $post->user_id ? true : abort(403);
+    }
+
+    PostController
+    public function update(PostRequest $request, int $id): RedirectResponse
+    {
+    $post = Post::all()->find($id);
+    $this->authorize('update', $post);
+    $post->edit($request->all());
+    $post->uploadImage($request->file('image'));
+    $post->setCategory($request->get('category_id'));
+    $post->setTags($request->get('tags'));
+    $post->toggleStatus($request->get('status'));
+    $post->toggleFeatured($request->get('is_featured'));
+    Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
+    return redirect()->route('posts.index');
+        }
+регистрация, поделится, с пом соц сетей, телескоп, просматривают
