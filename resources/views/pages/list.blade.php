@@ -4,47 +4,53 @@
 @endsection
 
 @section('text')
-<!--main content start-->
-<div class="main-content">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="row">
-                @foreach($posts as $post)
-                    <div class="col-md-6">
-                        <article class="post post-grid">
-                            <div class="post-thumb">
-                                <a href="{{route('post.show', $post->slug)}}"><img src="{{$post->getImage()}}" alt=""></a>
-                                <a href="{{route('post.show', $post->slug)}}" class="post-thumb-overlay text-center">
-                                    <div class="text-uppercase text-center">{{__('messages.view_post')}}</div>
-                                </a>
-                            </div>
-                            <div class="post-content">
-                                <header class="entry-header text-center text-uppercase">
-                                    @if($post->hasCategory())
-		                            <h6><a href="{{route('category.show', $post->category->slug)}}">{{$post->getCategoryTitle()}}</a></h6>
-		                            @endif
-                                    <h1 class="entry-title"><a href="{{route('post.show', $post->slug)}}">{{$post->title}}</a></h1>
-                                </header>
-                                <div class="entry-content">
-                                    {!! $post->description !!}
-                                    <div class="social-share">
-                                        <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong style="color: red">{{$post->getDate()}}</strong> </span>
+    <!--main content start-->
+    <div class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        @foreach($posts as $post)
+                            <div class="col-md-6">
+                                <article class="post post-grid">
+                                    <div class="post-thumb">
+                                        <a href="{{route('post.show', $post->slug)}}"><img src="{{$post->getImage()}}"
+                                                                                           alt=""></a>
+                                        <a href="{{route('post.show', $post->slug)}}"
+                                           class="post-thumb-overlay text-center">
+                                            <div class="text-uppercase text-center">{{__('messages.view_post')}}</div>
+                                        </a>
                                     </div>
-                                </div>
-                            </div>
+                                    <div class="post-content">
+                                        <header class="entry-header text-center text-uppercase">
+                                            @if($post->hasCategory())
+                                                <h6>
+                                                    <a href="{{route('category.show', $post->category->slug)}}">{{$post->getCategoryTitle()}}</a>
+                                                </h6>
+                                            @endif
+                                            <h1 class="entry-title"><a
+                                                    href="{{route('post.show', $post->slug)}}">{{$post->title}}</a></h1>
+                                        </header>
+                                        <div class="entry-content">
+                                            {!! $post->description !!}
+                                            <div class="social-share">
+                                                <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
+                                                        style="color: red">{{$post->getDate()}}</strong> </span>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        </article>
+                                </article>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+                    {{$posts->links()}}
                 </div>
-                {{$posts->links()}}
+                @include('pages._sidebar')
             </div>
-            @include('pages._sidebar')
         </div>
     </div>
-</div>
-<!-- end main content-->
+    <!-- end main content-->
 @endsection
 
 @section('js')
