@@ -1,5 +1,6 @@
 <div class="social-share">
-    <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong class="red">{{$post->getDate()}}</strong> </span>
+    <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
+            class="red">{{$post->getDate()}}</strong> </span>
     <ul class="text-center pull-right">
         <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
         <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
