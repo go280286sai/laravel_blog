@@ -1,0 +1,10 @@
+language: php
+php:
+  - "8.0"
+  - "8.1"
+
+services:
+  - docker
+
+script:
+  - ./vendor/bin/phpstan analyse app

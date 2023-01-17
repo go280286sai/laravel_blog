@@ -8,6 +8,7 @@ use App\Models\Tag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -17,13 +18,8 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $date = Carbon::now();
-        if (Cache::has('home')) {
-            $posts = Cache::get('home');
-        } else {
-            $posts = Post::where('status', '=', 1)->where('s_date', '<=', $date)->orderByDesc('id')->cursorPaginate(2);
-            Cache::put('home', $posts);
-        }
+        $date = Carbon::now()->format('Y-m-d');
+        $posts = Post::where('status', 1)->where('s_date', '<=', $date)->orderByDesc('id')->paginate(2);
         return view('pages.index', ['posts' => $posts, 'home' => 'active']);
     }
 
