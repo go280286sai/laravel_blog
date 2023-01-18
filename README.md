@@ -749,8 +749,6 @@ Unit test:
     $this->assertEquals('1', $user->status);
     }
 
-
-
 ## Безопасное удаление
 
 Добавляем в миграцию поле **$table->softDeletes()** для users, comments, subscriptions, posts.
@@ -880,7 +878,7 @@ Unit test:
 
 Может создать или восстановить пост, который был удален или удалить навсегда.
 
-Может активировать или деактивировать пост. 
+Может активировать или деактивировать пост.
 
 Написать комментарий к посту:
 
@@ -930,4 +928,72 @@ Unit test:
     Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
     return redirect()->route('posts.index');
         }
-регистрация, поделится, с пом соц сетей, телескоп, просматривают
+
+## Share link
+
+Laravel Share Buttons
+
+https://github.com/kudashevs/laravel-share-buttons
+
+Отдельно создан блок кода с возможностью подключения
+
+    <div class="social-share">
+        <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
+                class="red">{{$post->getDate()}}</strong> </span>
+        <ul class="text-center pull-right">
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
+        </ul>
+    </div>
+
+## Регистрация
+
+Аутентификация в блоге реализована с Laravel Breeze.
+
+![](./storage/read/login.png)
+
+С Laravel socialite добавлена возможность входа через Github, Facebook.
+
+Controller:
+
+    public function githubRedirect()
+    {
+    return Socialite::driver('github')->redirect();
+    }
+
+    public function loginWithGithub()
+    {
+    try {
+    $user = Socialite::driver('github')->user();
+    $isUser = User::where('github_id', $user->id)->first();
+     if ($isUser) {
+         Auth::login($isUser);
+            } else {
+                $createUser = new User();
+                $createUser->name = $user->name;
+                $createUser->email = $user->email;
+                $createUser->github_id = $user->id;
+                $createUser->password = encrypt('user');
+                $createUser->save();
+                Auth::login($createUser);       
+            }       
+            Log::info('Enter with GitHub: '.Auth::user()->name);
+            return redirect('/admin/dashboard');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
+    }
+config/service:
+
+    'github' => [
+    'client_id' => env('GITHUB_CLIENT_ID'),
+    'client_secret' => env('GITHUB_CLIENT_SECRET'),
+    'redirect' => 'http://localhost/auth/github/callback',
+    ]
+регистрация, с пом соц сетей, телескоп, просматривают
