@@ -99,4 +99,8 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function me(Request $request)
+    {
+        return $request->user();
+    }
 }
