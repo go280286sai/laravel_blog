@@ -749,8 +749,6 @@ Unit test:
     $this->assertEquals('1', $user->status);
     }
 
-
-
 ## Безопасное удаление
 
 Добавляем в миграцию поле **$table->softDeletes()** для users, comments, subscriptions, posts.
@@ -880,7 +878,7 @@ Unit test:
 
 Может создать или восстановить пост, который был удален или удалить навсегда.
 
-Может активировать или деактивировать пост. 
+Может активировать или деактивировать пост.
 
 Написать комментарий к посту:
 
@@ -930,4 +928,313 @@ Unit test:
     Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
     return redirect()->route('posts.index');
         }
-регистрация, поделится, с пом соц сетей, телескоп, просматривают
+
+## Share link
+
+Laravel Share Buttons
+
+https://github.com/kudashevs/laravel-share-buttons
+
+Отдельно создан блок кода с возможностью подключения
+
+    <div class="social-share">
+        <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
+                class="red">{{$post->getDate()}}</strong> </span>
+        <ul class="text-center pull-right">
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
+        </ul>
+    </div>
+
+## Регистрация
+
+Аутентификация в блоге реализована с Laravel Breeze.
+
+![](./storage/read/login.png)
+
+С Laravel socialite добавлена возможность входа через Github, Facebook.
+
+Controller:
+
+    public function githubRedirect()
+    {
+    return Socialite::driver('github')->redirect();
+    }
+
+    public function loginWithGithub()
+    {
+    try {
+    $user = Socialite::driver('github')->user();
+    $isUser = User::where('github_id', $user->id)->first();
+     if ($isUser) {
+         Auth::login($isUser);
+            } else {
+                $createUser = new User();
+                $createUser->name = $user->name;
+                $createUser->email = $user->email;
+                $createUser->github_id = $user->id;
+                $createUser->password = encrypt('user');
+                $createUser->save();
+                Auth::login($createUser);       
+            }       
+            Log::info('Enter with GitHub: '.Auth::user()->name);
+            return redirect('/admin/dashboard');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
+    }
+
+config/service:
+
+    'github' => [
+    'client_id' => env('GITHUB_CLIENT_ID'),
+    'client_secret' => env('GITHUB_CLIENT_SECRET'),
+    'redirect' => 'http://localhost/auth/github/callback',
+    ]
+
+регистрация, с пом соц сетей, телескоп, просматривают
+
+## API with sanctum
+
+Создаем Api\\AuthController:
+
+    public function createUser(Request $request)
+    {
+    try {
+    $validateUser = Validator::make($request->all(),
+    [
+    'name' => 'required',
+    'email' => 'required|email|unique:users,email',
+    'password' => 'required'
+    ]);
+            if($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Created Successfully',
+                'token' => $user->createToken("API TOKEN")->plainTextToken
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function loginUser(Request $request)
+    {
+        try {
+            $validateUser = Validator::make($request->all(),
+                [
+                    'email' => 'required|email',
+                    'password' => 'required'
+                ]);
+
+            if($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            if(!Auth::attempt($request->only(['email', 'password']))){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Email & Password does not match with our record.',
+                ], 401);
+            }
+
+            $user = User::where('email', $request->email)->first();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Logged In Successfully',
+                'token' => $user->createToken("API TOKEN")->plainTextToken
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function me(Request $request)
+    {
+        return $request->user();
+    }
+
+![](./storage/read/api_1.png)
+
+Получаем токен, который можем использовать для запросов:
+
+![](./storage/read/api_2.png)
+
+routes/api:
+
+    Route::post('/login', '\App\Http\Controllers\Api\AuthController@loginUser');
+    Route::post('/register', '\App\Http\Controllers\Api\AuthController@createUser');
+    Route:: middleware('auth:sanctum')->group(function () {
+    Route::get('/me', '\App\Http\Controllers\Api\AuthController@me');
+    Route::apiResource('/profile', '\App\Http\Controllers\Api\ProfileController');
+    Route::apiResource('/post', '\App\Http\Controllers\Api\PostsController');
+    });
+    Route::get('/category', '\App\Http\Controllers\Api\CategoriesController@index');
+    Route::get('/tags', '\App\Http\Controllers\Api\TagsController@index');
+
+В Headers Accept меняем на application/json
+и добавляем Authorization с токеном
+Authorization Bearer ******************************
+Controllers/Api/PostController:
+
+http://localhost/api/post method: GET action:index
+
+    public function index(): JsonResponse
+    {
+    try {
+    if (Auth::user()->is_admin) {
+    $posts = Post::all();
+    } else {
+    $posts = Post::all()->where('user_id', '=', Auth::user()->id);
+    }
+    } catch (\Exception $e) {
+    Log::info('Show posts: ' . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    return response()->json($posts);
+    }
+
+http://localhost/api/post/15 method: GET action:show
+
+    public function show($id): JsonResponse
+    {
+    try {
+    if (Auth::user()->is_admin) {
+    $posts = Post::find($id);
+    } else {
+    $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
+    }
+    if(!empty($posts)){
+    return response()->json($posts);
+    }else throw new \Exception();
+    }
+    catch (\Exception $e) {
+    Log::info('Show posts: ' . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post method: POST action:store
+
+    public function store(PostRequest $request): JsonResponse
+    {
+    try {
+    $post = Post::add($request->all());
+    $post->uploadImage($request->file('image'));
+    $post->toggleFeatured($request->get('is_featured'));
+    Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    } catch (\Exception $e) {
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post/15 method: PUT action:update
+
+    public function update(PostRequest $request, $id): JsonResponse
+    {
+    try {
+    $post = Post::find($id);
+    if($post->user_id!=Auth::user()->id){
+    throw new \Exception();
+    }
+    $post->edit($request->all(), $id);
+    $post->uploadImage($request->file('image'));
+    $post->toggleFeatured($request->get('is_featured'));
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    } catch (\Exception $e) {
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post_delete/11 method:delete action:destroy
+
+    public function destroy(int $id)
+    {
+    try {
+    DB::transaction(function () use ($id) {
+    $post = Post::find($id);
+    if ($post->user_id == Auth::user()->id) {
+    Post::find($id)->remove();
+    Comment::where('post_id', '=', $id)->delete();
+    DB::commit();
+    } else {
+    throw new \Exception('Error');
+    }
+    });
+    } catch (\Exception $e) {
+    Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    }
+
+Делаем проверку, если статья принадлежит данному пользователю то удаляем статью и комментарии к ней.
+
+Если не принадлежит или нет такого id вызываем исключение и возвращаем 400.
+
+Реализуем для Profile
+
+http://localhost/api/profile method:GET action:index
+
+    public function index(): JsonResponse
+    {
+    try {
+    $user = Auth::user();
+    Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json($user);
+    }catch (\Exception $e) {
+    Log::info('Api error profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/profile method:PUT action:update
+
+    public function update(Request $request): JsonResponse
+    {
+    try {
+    $user = Auth::user();
+    User::edit($request->all(), $user->id);
+    Log::info('Api update profile, status ok: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    }catch (\Exception $e) {
+    Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    return response()->json(['status' => 'ok']);
+    }

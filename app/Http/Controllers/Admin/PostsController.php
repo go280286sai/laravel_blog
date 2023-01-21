@@ -99,13 +99,10 @@ class PostsController extends Controller
      */
     public function update(PostRequest $request, int $id): RedirectResponse
     {
-        $post = Post::all()->find($id);
+        $post = Post::find($id);
         $this->authorize('update', $post);
-        $post->edit($request->all());
+        $post->edit($request->all(), $id);
         $post->uploadImage($request->file('image'));
-        $post->setCategory($request->get('category_id'));
-        $post->setTags($request->get('tags'));
-        $post->toggleStatus($request->get('status'));
         $post->toggleFeatured($request->get('is_featured'));
         Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
 
