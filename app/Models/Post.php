@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -72,24 +73,29 @@ class Post extends Model
         $post->content = $fields['content'];
         $post->slug = Str::of($fields['title'])->slug('-');
         $post->status = $fields['status'] ?? 0;
+        $post->setCategory($fields['category_id']);
+        $post->setTags($fields['tags']);
         $post->save();
 
         return $post;
     }
 
     /**
-     * @param $fields
+     * @param array $fields
+     * @param int $id
      * @return void
      */
-    public function edit($fields): void
+    public function edit(array $fields, int $id): void
     {
-        $post = new static;
+        $post = Post::find($id);
         $post->title = $fields['title'];
         $post->description = $fields['description'];
-        $post->s_date = Carbon::createFromFormat('F j, Y', $fields['s_date'])->format('Y-m-d');
+        $post->s_date = $fields['s_date'];
         $post->content = $fields['content'];
         $post->slug = Str::of($fields['title'])->slug('-');
-        $this->save();
+        $post->setCategory($fields['category_id']);
+        $post->setTags($fields['tags']);
+        $post->save();
     }
 
     /**
@@ -107,7 +113,7 @@ class Post extends Model
     public function removeImage(): void
     {
         if ($this->image != null) {
-            Storage::delete(env('USERS_IMG').$this->image);
+            Storage::delete(env('USERS_IMG') . $this->image);
         }
     }
 
@@ -120,8 +126,8 @@ class Post extends Model
         if ($image == null) {
             return;
         }
-        Storage::delete('uploads/posts/'.$this->image);
-        $filename = Str::random(10).'.'.$image->extension();
+        Storage::delete('uploads/posts/' . $this->image);
+        $filename = Str::random(10) . '.' . $image->extension();
         $image->storeAs('uploads/posts', $filename);
         $this->image = $filename;
         $this->save();
@@ -136,11 +142,11 @@ class Post extends Model
             return '/uploads/posts/no-image.png';
         }
 
-        return '/uploads/posts/'.$this->image;
+        return '/uploads/posts/' . $this->image;
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return void
      */
     public function setCategory(int $id): void
@@ -262,7 +268,7 @@ class Post extends Model
      */
     public function getTagsTitles(): string
     {
-        return (! $this->tags->isEmpty())
+        return (!$this->tags->isEmpty())
             ? implode(', ', $this->tags->pluck('title')->all())
             : __('messages.no_tags');
     }
@@ -358,7 +364,7 @@ class Post extends Model
      */
     public static function telegramForwardButton(string $url, string $text = ''): string
     {
-        $share_url = 'https://t.me/share/url?url='.$url.'&text='.$text;
+        $share_url = 'https://t.me/share/url?url=' . $url . '&text=' . $text;
         return "<a href='{$share_url}'>Share</a>";
     }
 }

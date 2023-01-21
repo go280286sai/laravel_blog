@@ -989,6 +989,7 @@ Controller:
             Log::error($exception->getMessage());
         }
     }
+
 config/service:
 
     'github' => [
@@ -996,7 +997,6 @@ config/service:
     'client_secret' => env('GITHUB_CLIENT_SECRET'),
     'redirect' => 'http://localhost/auth/github/callback',
     ]
-
 
 регистрация, с пом соц сетей, телескоп, просматривают
 
@@ -1091,3 +1091,150 @@ config/service:
 
 ![](./storage/read/api_2.png)
 
+routes/api:
+
+    Route::post('/login', '\App\Http\Controllers\Api\AuthController@loginUser');
+    Route::post('/register', '\App\Http\Controllers\Api\AuthController@createUser');
+    Route:: middleware('auth:sanctum')->group(function () {
+    Route::get('/me', '\App\Http\Controllers\Api\AuthController@me');
+    Route::apiResource('/profile', '\App\Http\Controllers\Api\ProfileController');
+    Route::apiResource('/post', '\App\Http\Controllers\Api\PostsController');
+    });
+    Route::get('/category', '\App\Http\Controllers\Api\CategoriesController@index');
+    Route::get('/tags', '\App\Http\Controllers\Api\TagsController@index');
+
+В Headers Accept меняем на application/json
+и добавляем Authorization с токеном
+Authorization Bearer ******************************
+Controllers/Api/PostController:
+
+http://localhost/api/post method: GET action:index
+
+    public function index(): JsonResponse
+    {
+    try {
+    if (Auth::user()->is_admin) {
+    $posts = Post::all();
+    } else {
+    $posts = Post::all()->where('user_id', '=', Auth::user()->id);
+    }
+    } catch (\Exception $e) {
+    Log::info('Show posts: ' . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    return response()->json($posts);
+    }
+
+http://localhost/api/post/15 method: GET action:show
+
+    public function show($id): JsonResponse
+    {
+    try {
+    if (Auth::user()->is_admin) {
+    $posts = Post::find($id);
+    } else {
+    $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
+    }
+    if(!empty($posts)){
+    return response()->json($posts);
+    }else throw new \Exception();
+    }
+    catch (\Exception $e) {
+    Log::info('Show posts: ' . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post method: POST action:store
+
+    public function store(PostRequest $request): JsonResponse
+    {
+    try {
+    $post = Post::add($request->all());
+    $post->uploadImage($request->file('image'));
+    $post->toggleFeatured($request->get('is_featured'));
+    Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    } catch (\Exception $e) {
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post/15 method: PUT action:update
+
+    public function update(PostRequest $request, $id): JsonResponse
+    {
+    try {
+    $post = Post::find($id);
+    if($post->user_id!=Auth::user()->id){
+    throw new \Exception();
+    }
+    $post->edit($request->all(), $id);
+    $post->uploadImage($request->file('image'));
+    $post->toggleFeatured($request->get('is_featured'));
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    } catch (\Exception $e) {
+    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/post_delete/11 method:delete action:destroy
+
+    public function destroy(int $id)
+    {
+    try {
+    DB::transaction(function () use ($id) {
+    $post = Post::find($id);
+    if ($post->user_id == Auth::user()->id) {
+    Post::find($id)->remove();
+    Comment::where('post_id', '=', $id)->delete();
+    DB::commit();
+    } else {
+    throw new \Exception('Error');
+    }
+    });
+    } catch (\Exception $e) {
+    Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
+    return response()->json(['status' => 'ok']);
+    }
+
+Делаем проверку, если статья принадлежит данному пользователю то удаляем статью и комментарии к ней.
+
+Если не принадлежит или нет такого id вызываем исключение и возвращаем 400.
+
+Реализуем для Profile
+
+http://localhost/api/profile method:GET action:index
+
+    public function index(): JsonResponse
+    {
+    try {
+    $user = Auth::user();
+    Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json($user);
+    }catch (\Exception $e) {
+    Log::info('Api error profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    }
+
+http://localhost/api/profile method:PUT action:update
+
+    public function update(Request $request): JsonResponse
+    {
+    try {
+    $user = Auth::user();
+    User::edit($request->all(), $user->id);
+    Log::info('Api update profile, status ok: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    }catch (\Exception $e) {
+    Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+    return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
+    return response()->json(['status' => 'ok']);
+    }

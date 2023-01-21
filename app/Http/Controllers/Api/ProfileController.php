@@ -18,9 +18,15 @@ class ProfileController extends Controller
      */
     public function index(): JsonResponse
     {
-        $user = Auth::user();
-        Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-        return response()->json($user);
+        try {
+            $user = Auth::user();
+            Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json($user);
+        }catch (\Exception $e) {
+            Log::info('Api error profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
+
     }
 
     /**
@@ -31,13 +37,15 @@ class ProfileController extends Controller
      */
     public function update(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        if (User::edit($request->all(), $user->id)) {
+        try {
+            $user = Auth::user();
+            User::edit($request->all(), $user->id);
             Log::info('Api update profile, status ok: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-            return response()->json(['status' => 'ok']);
+        }catch (\Exception $e) {
+            Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-        Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-        return response()->json(['status' => 'error']);
+        return response()->json(['status' => 'ok']);
     }
 
 }

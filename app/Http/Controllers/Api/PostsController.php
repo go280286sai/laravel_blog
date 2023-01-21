@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,247 +24,106 @@ class PostsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return View
+     * @return JsonResponse
      */
-    public function index(): View
+    public function index(): JsonResponse
     {
-        if (Auth::user()->is_admin) {
-            $posts = Post::all();
-        } else {
-            $posts = Post::all()->where('user_id', '=', Auth::user()->id);
+        try {
+            if (Auth::user()->is_admin) {
+                $posts = Post::all();
+            } else {
+                $posts = Post::all()->where('user_id', '=', Auth::user()->id);
+            }
+        } catch (\Exception $e) {
+            Log::info('Show posts: ' . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-
-        return view('admin.posts.index', ['posts' => $posts, 'i' => 1]);
+        return response()->json($posts);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return View
-     */
-    public function create(): View
+    public function show($id): JsonResponse
     {
-        $categories = Category::pluck('title', 'id')->all();
-        $tags = Tag::pluck('title', 'id')->all();
-
-        return view('admin.posts.create', ['categories' => $categories, 'tags' => $tags]);
+        try {
+            if (Auth::user()->is_admin) {
+                $posts = Post::find($id);
+            } else {
+                $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
+            }
+            if(!empty($posts)){
+                return response()->json($posts);
+            }else throw new \Exception();
+        }
+    catch (\Exception $e) {
+        Log::info('Show posts: ' . ' --' . Auth::user()->name);
+        return response()->json(['status' => 'error'])->setStatusCode(400);
+    }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  PostRequest  $request
-     * @return RedirectResponse
+     * @param PostRequest $request
+     * @return JsonResponse
      */
-    public function store(PostRequest $request): RedirectResponse
+    public function store(PostRequest $request): JsonResponse
     {
-        $post = Post::add($request->all());
-        $post->uploadImage($request->file('image'));
-        $post->setCategory($request->get('category_id'));
-        $post->setTags($request->get('tags'));
-        $post->toggleFeatured($request->get('is_featured'));
-        Log::info('Create post: '.$request->get('title').' '.Auth::user()->name);
+        try {
+            $post = Post::add($request->all());
+            $post->uploadImage($request->file('image'));
+            $post->toggleFeatured($request->get('is_featured'));
+            Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
 
-        return redirect()->route('posts.index');
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return View
-     */
-    public function edit(int $id): View
+    public function update(PostRequest $request, $id): JsonResponse
     {
-        $post = Post::all()->find($id);
-        $categories = Category::pluck('title', 'id')->all();
-        $tags = Tag::pluck('title', 'id')->all();
-        $selectedTags = $post->tags->pluck('id')->all();
+        try {
+            $post = Post::find($id);
+            if ($post->user_id != Auth::user()->id) {
+                throw new \Exception();
+            }
+            $post->edit($request->all(), $id);
+            $post->uploadImage($request->file('image'));
+            $post->toggleFeatured($request->get('is_featured'));
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
 
-        return view('admin.posts.edit', compact(
-            'categories',
-            'tags',
-            'post',
-            'selectedTags'
-        ));
-    }
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  PostRequest  $request
-     * @param  int  $id
-     * @return RedirectResponse
-     *
-     * @throws AuthorizationException
-     */
-    public function update(PostRequest $request, int $id): RedirectResponse
-    {
-        $post = Post::all()->find($id);
-        $this->authorize('update', $post);
-        $post->edit($request->all());
-        $post->uploadImage($request->file('image'));
-        $post->setCategory($request->get('category_id'));
-        $post->setTags($request->get('tags'));
-        $post->toggleStatus($request->get('status'));
-        $post->toggleFeatured($request->get('is_featured'));
-        Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
-
-        return redirect()->route('posts.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return RedirectResponse
+     * @param int $id
+     * @return int|JsonResponse
      */
-    public function destroy(int $id): RedirectResponse
+    public function destroy(int $id)
     {
-        DB::transaction(function () use ($id) {
-            Post::find($id)->remove();
-            Comment::where('post_id', '=', $id)->delete();
-            Log::info('Delete post: '.$id.' --'.Auth::user()->name);
-        });
-
-        return redirect()->route('posts.index');
-    }
-
-    /**
-     * @param  Request  $request
-     * @return View
-     */
-    public function viewCommentPost(Request $request): View
-    {
-        $id = $request->get('id');
-        $comment = $request->get('comment');
-
-        return view('admin.posts.comment', ['id' => $id, 'comment' => $comment]);
-    }
-
-    /**
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
-    public function addCommentPost(Request $request): RedirectResponse
-    {
-        $id = $request->get('id');
-        $content = $request->get('content');
-        $post = Post::all()->find($id);
-        $post->comment = $content;
-        $post->save();
-        Log::info('Add comment: '.$post->title.' '.$post->comment.' --'.Auth::user()->name);
-
-        return redirect()->route('posts.index');
-    }
-
-    /**
-     * @param  Request  $request
-     * @return View
-     */
-    public function viewMailPost(Request $request): View
-    {
-        $email = $request->email;
-        $title = $request->title;
-
-        return view('admin.posts.mail', ['email' => $email, 'title' => $title]);
-    }
-
-    /**
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
-    public function sendMailPost(Request $request): RedirectResponse
-    {
-        Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
-        Log::info('Send mail: '.$request->get('email').' '.$request->get('title').' --'.Auth::user()->name);
-
-        return redirect()->route('posts.index');
-    }
-
-    /**
-     * @param  Request  $request
-     * @return RedirectResponse|void
-     */
-    public function recover(Request $request)
-    {
-        $target = $request->get('target');
-        if ($target == 'trash') {
-            $id = $request->get('id');
-            Post::onlyTrashed()->where('id', '=', $id)->forceDelete();
-            Log::info('Trash post: '.$id.' --'.Auth::user()->name);
-
-            return redirect()->route('posts_trash');
-        } elseif ($target == 'recover') {
-            $id = $request->get('id');
-            $this->getRecover($id);
-            Log::info('Recover post: '.$id.' --'.Auth::user()->name);
-
-            return redirect()->route('posts_trash');
-        } elseif ($target == 'recover_all') {
-            $posts = Post::onlyTrashed()->get();
-            foreach ($posts as $post) {
-                $this->getRecover($post->id);
-            }
-            Log::info('Recover all posts: '.'--'.Auth::user()->name);
-
-            return redirect()->route('posts_trash');
-        } elseif ($target == 'trash_all') {
-            $posts = Post::onlyTrashed()->get();
-            foreach ($posts as $post) {
-                $this->getTrash($post->id);
-            }
-            Log::info('Trash all posts: '.' --'.Auth::user()->name);
-
-            return redirect()->route('posts_trash');
+        try {
+            DB::transaction(function () use ($id) {
+                $post = Post::find($id);
+                if ($post->user_id == Auth::user()->id) {
+                    Post::find($id)->remove();
+                    Comment::where('post_id', '=', $id)->delete();
+                    DB::commit();
+                } else {
+                    throw new \Exception('Error');
+                }
+            });
+        } catch (\Exception $e) {
+            Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-    }
-
-    /**
-     * @param $id
-     * @return void
-     */
-    public function getRecover($id): void
-    {
-        DB::transaction(function () use ($id) {
-            Comment::onlyTrashed()->where('post_id', '=', $id)->restore();
-            Post::onlyTrashed()->where('id', '=', $id)->restore();
-        });
-    }
-
-    /**
-     * @param $id
-     * @return void
-     */
-    public function getTrash($id): void
-    {
-        DB::transaction(function () use ($id) {
-            Comment::onlyTrashed()->where('post_id', '=', $id)->forceDelete();
-            Post::onlyTrashed()->where('id', '=', $id)->forceDelete();
-        });
-    }
-
-    /**
-     * @param  Request  $request
-     * @return View
-     */
-    public function trash(Request $request): View
-    {
-        $trash = Post::onlyTrashed()->get();
-
-        return view('admin.posts.trash', ['trash' => $trash]);
-    }
-
-    /**
-     * @param $id
-     * @return RedirectResponse
-     */
-    public function toggle($id): RedirectResponse
-    {
-        $post = Post::find($id);
-        $post->toggleStatus();
-        Log::info('Toggle status: '.$id.' --'.Auth::user()->name);
-
-        return redirect()->back();
+        Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
+        return response()->json(['status' => 'ok']);
     }
 }
