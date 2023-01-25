@@ -86,6 +86,7 @@ class PostPolicy
         return null;
     }
 
+
     /**
      * Determine whether the user can permanently delete the model.
      *
