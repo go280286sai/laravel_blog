@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -13,12 +12,16 @@ class MailingListSub extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $title;
+    private string $content;
+    private int $id;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($title, $content, $id)
+    public function __construct(string $title, string $content, int $id)
     {
         $this->title = $title;
         $this->content = $content;

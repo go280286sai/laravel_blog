@@ -21,7 +21,7 @@ class Message extends Model
      */
     public static function addMessage($request): static
     {
-        $message = new static();
+        $message = new self();
         $message->fill($request);
         $message->save();
 

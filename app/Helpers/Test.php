@@ -1,22 +1,25 @@
 <?php
 
-interface Rec{
-    function recursia(int $n);
+interface Rec
+{
+    public function recursia(int $n);
 }
-class Recursia implements Rec{
+class Recursia implements Rec
+{
     private int $num;
+
     public function recursia($n)
     {
-if($n==1){
-    return 1;
-}else{
-    return $n*$this->recursia($n-1);
-}
+        if ($n == 1) {
+            return 1;
+        } else {
+            return $n * $this->recursia($n - 1);
+        }
     }
 }
 
-
-abstract class Decorator implements Rec{
+abstract class Decorator implements Rec
+{
     protected $obj;
 
     /**
@@ -26,20 +29,20 @@ abstract class Decorator implements Rec{
     {
         $this->obj = $obj;
     }
-
 }
 
-class Resulr extends Decorator{
-    function recursia(int $n)
+class Resulr extends Decorator
+{
+    public function recursia(int $n)
     {
-        if($n==1){
+        if ($n == 1) {
             return 1;
-        }else{
-            return $n+$this->recursia($n-1);
+        } else {
+            return $n + $this->recursia($n - 1);
         }
     }
 }
-$class=new Recursia();
+$class = new Recursia();
 echo $class->recursia(5);
-$class2=new Resulr($class);
+$class2 = new Resulr($class);
 echo $class2->recursia(5);

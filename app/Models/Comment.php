@@ -30,34 +30,35 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return void
-     */
-    public function allow(): void
-    {
-        $this->status = 1;
-        $this->save();
-    }
+//    /**
+//     * @return void
+//     */
+//    public function allow(): void
+//    {
+//        $this->status = 1;
+//        $this->save();
+//    }
+
+//    /**
+//     * @return void
+//     */
+//    public function disAllow(): void
+//    {
+//        $this->status = 0;
+//        $this->save();
+//    }
 
     /**
      * @return void
      */
-    public function disAllow(): void
-    {
-        $this->status = 0;
-        $this->save();
-    }
-
-    /**
-     * @return void
-     */
-    public function toggleStatus()
+    public function toggleStatus(): void
     {
         if ($this->status == 0) {
-            return $this->allow();
+            $this->status = 1;
+            $this->save();
         }
-
-        return $this->disAllow();
+        $this->status = 0;
+        $this->save();
     }
 
     /**

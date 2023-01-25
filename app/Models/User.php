@@ -88,7 +88,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public static function add($fields): static
     {
-        $user = new static();
+        $user = new self();
         $user->name = $fields['name'];
         $user->email = $fields['email'];
         $user->password = bcrypt($fields['password']);
@@ -166,24 +166,24 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return '/uploads/users/'.$this->avatar;
     }
+//
+//    /**
+//     * @return void
+//     */
+//    public function makeAdmin(): void
+//    {
+//        $this->is_admin = 1;
+//        $this->save();
+//    }
 
-    /**
-     * @return void
-     */
-    public function makeAdmin(): void
-    {
-        $this->is_admin = 1;
-        $this->save();
-    }
-
-    /**
-     * @return void
-     */
-    public function makeNormal(): void
-    {
-        $this->is_admin = 0;
-        $this->save();
-    }
+//    /**
+//     * @return void
+//     */
+//    public function makeNormal(): void
+//    {
+//        $this->is_admin = 0;
+//        $this->save();
+//    }
 
     /**
      * @param $value
@@ -192,40 +192,44 @@ class User extends Authenticatable implements MustVerifyEmail
     public function toggleAdmin($value)
     {
         if ($value == null) {
-            return $this->makeNormal();
+            $this->is_admin = 0;
+            $this->save();
         }
 
-        return $this->makeAdmin();
-    }
-
-    /**
-     * @return void
-     */
-    public function ban(): void
-    {
-        $this->status = 0;
+        $this->is_admin = 1;
         $this->save();
     }
 
-    /**
-     * @return void
-     */
-    public function unban(): void
-    {
-        $this->status = 1;
-        $this->save();
-    }
+//    /**
+//     * @return void
+//     */
+//    public function ban(): void
+//    {
+//        $this->status = 0;
+//        $this->save();
+//    }
+
+//    /**
+//     * @return void
+//     */
+//    public function unban(): void
+//    {
+//        $this->status = 1;
+//        $this->save();
+//    }
 
     /**
      * @param $value
-     * @return null
+     * @return void
      */
-    public function toggleBan($value)
+    public function toggleBan($value): void
     {
         if ($value == 0) {
-            return $this->unban();
+            $this->status = 1;
+            $this->save();
         }
 
-        return $this->ban();
+        $this->status = 0;
+        $this->save();
     }
 }

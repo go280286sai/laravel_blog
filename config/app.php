@@ -212,7 +212,7 @@ return [
     */
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
-    'ShareButtons' => Kudashevs\ShareButtons\Facades\ShareButtonsFacade::class,
+        'ShareButtons' => Kudashevs\ShareButtons\Facades\ShareButtonsFacade::class,
     ])->toArray(),
 
 ];

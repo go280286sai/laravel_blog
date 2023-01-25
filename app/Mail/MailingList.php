@@ -12,12 +12,15 @@ class MailingList extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $title;
+    private string $content;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($title, $content)
+    public function __construct(string $title, string $content)
     {
         $this->title = $title;
         $this->content = $content;

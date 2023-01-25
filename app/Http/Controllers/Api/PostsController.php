@@ -4,20 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
-use App\Mail\SendMessageEmail;
-use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Tag;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\View\View;
 
 class PostsController extends Controller
 {
@@ -35,9 +27,11 @@ class PostsController extends Controller
                 $posts = Post::all()->where('user_id', '=', Auth::user()->id);
             }
         } catch (\Exception $e) {
-            Log::info('Show posts: ' . ' --' . Auth::user()->name);
+            Log::info('Show posts: '.' --'.Auth::user()->name);
+
             return response()->json(['status' => 'error'])->setStatusCode(400);
         }
+
         return response()->json($posts);
     }
 
@@ -49,20 +43,22 @@ class PostsController extends Controller
             } else {
                 $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
             }
-            if(!empty($posts)){
+            if (! empty($posts)) {
                 return response()->json($posts);
-            }else throw new \Exception();
+            } else {
+                throw new \Exception();
+            }
+        } catch (\Exception $e) {
+            Log::info('Show posts: '.' --'.Auth::user()->name);
+
+            return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-    catch (\Exception $e) {
-        Log::info('Show posts: ' . ' --' . Auth::user()->name);
-        return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param PostRequest $request
+     * @param  PostRequest  $request
      * @return JsonResponse
      */
     public function store(PostRequest $request): JsonResponse
@@ -71,11 +67,12 @@ class PostsController extends Controller
             $post = Post::add($request->all());
             $post->uploadImage($request->file('image'));
             $post->toggleFeatured($request->get('is_featured'));
-            Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
+            Log::info('Create post: '.$request->get('title').' '.Auth::user()->name);
 
             return response()->json(['status' => 'ok']);
         } catch (\Exception $e) {
-            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
+
             return response()->json(['status' => 'error'])->setStatusCode(400);
         }
     }
@@ -90,20 +87,20 @@ class PostsController extends Controller
             $post->edit($request->all(), $id);
             $post->uploadImage($request->file('image'));
             $post->toggleFeatured($request->get('is_featured'));
-            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
 
             return response()->json(['status' => 'ok']);
         } catch (\Exception $e) {
-            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
+
             return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return int|JsonResponse
      */
     public function destroy(int $id)
@@ -120,10 +117,12 @@ class PostsController extends Controller
                 }
             });
         } catch (\Exception $e) {
-            Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
+            Log::info('Delete post error: '.$id.' --'.Auth::user()->name);
+
             return response()->json(['status' => 'error'])->setStatusCode(400);
         }
-        Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
+        Log::info('Delete post: '.$id.' --'.Auth::user()->name);
+
         return response()->json(['status' => 'ok']);
     }
 }

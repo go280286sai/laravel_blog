@@ -15,7 +15,7 @@ class Telegram extends Model
      */
     public static function add(object $fields): void
     {
-        $telegram = new static();
+        $telegram = new self();
         $last_id = static::latest()->get()[0]->message_id;
         foreach ($fields as $item) {
             if ($last_id < $item->message()->id()) {
@@ -34,7 +34,7 @@ class Telegram extends Model
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return void
      */
     public static function statusAnswer(int $id): void

@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -21,7 +19,7 @@ class ApiTest extends TestCase
         if ($response->getStatusCode() != 200) {
             $response = $this->post('/api/login', ['email' => 'api_user@admin.ua', 'password' => 12345678]);
         }
-       $response->assertOk();
+        $response->assertOk();
     }
 
     public function test_category()
@@ -39,7 +37,6 @@ class ApiTest extends TestCase
 
     public function test_profile()
     {
-
         Sanctum::actingAs(
             User::find(1),
             ['*']
@@ -50,7 +47,6 @@ class ApiTest extends TestCase
 
     public function test_post()
     {
-
         Sanctum::actingAs(
             User::find(1),
             ['*']

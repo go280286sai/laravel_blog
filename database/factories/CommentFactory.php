@@ -17,10 +17,10 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
-            'text'=>'This is test comment',
-            'user_id'=>1,
-            'post_id'=>10,
-            'status'=>0
+            'text' => 'This is test comment',
+            'user_id' => 1,
+            'post_id' => 10,
+            'status' => 0,
         ];
     }
 }

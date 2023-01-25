@@ -6,9 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -20,6 +18,7 @@ class HomeController extends Controller
     {
         $date = Carbon::now()->format('Y-m-d');
         $posts = Post::where('status', 1)->where('s_date', '<=', $date)->orderByDesc('id')->paginate(2);
+
         return view('pages.index', ['posts' => $posts, 'home' => 'active']);
     }
 
@@ -37,7 +36,7 @@ class HomeController extends Controller
         if (Cache::has($slug) && in_array($_SERVER['REMOTE_ADDR'], $ip)) {
             Cache::increment($slug);
             $ip[] = $_SERVER['REMOTE_ADDR'];
-        } elseif (!Cache::has($slug)) {
+        } elseif (! Cache::has($slug)) {
             Cache::add($slug, 1, $date);
             $ip[] = $_SERVER['REMOTE_ADDR'];
         }

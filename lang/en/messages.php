@@ -45,14 +45,14 @@ return [
     'you_message_send' => 'You are sending a message',
     'no_category' => 'No category',
     'no_tags' => 'No tags',
-    'check_your_mailbox'=>'Check your mailbox',
-    'invalid_mail_entered'=>'Invalid mail entered',
-    'write_comment'=>'Write comment',
-    'write_text'=>'Write text',
-    'invalid_entered'=>'Invalidly entered',
-    'blog_title'=>'Blog of new technologies and opportunities',
-    'dear_user'=>'Dear user!',
-    'dear_subs'=>'Dear subscriber!',
-    'click_to_ref'=>'To confirm the quality of the link'
+    'check_your_mailbox' => 'Check your mailbox',
+    'invalid_mail_entered' => 'Invalid mail entered',
+    'write_comment' => 'Write comment',
+    'write_text' => 'Write text',
+    'invalid_entered' => 'Invalidly entered',
+    'blog_title' => 'Blog of new technologies and opportunities',
+    'dear_user' => 'Dear user!',
+    'dear_subs' => 'Dear subscriber!',
+    'click_to_ref' => 'To confirm the quality of the link',
 
 ];

@@ -61,7 +61,7 @@ class MessageController extends Controller
      */
     public function show(int $id): View
     {
-        $message = Message::find($id);
+        $message = Message::all()->find($id);
 
         return view('admin.messages.show', ['message' => $message]);
     }
@@ -86,7 +86,7 @@ class MessageController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        $message = Message::find($id);
+        $message = Message::all()->find($id);
         $message->status = 1;
         $message->save();
         Log::info('Message status read: '.$message->title.' '.Auth::user()->name);
@@ -102,7 +102,7 @@ class MessageController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $message = Message::where('id', $id)->delete();
+        $message = Message::all()->where('id', $id)->delete();
         Log::info('Delete message: '.$message->title.' '.Auth::user()->name);
 
         return back();
@@ -159,7 +159,7 @@ class MessageController extends Controller
         $mailing = $request->get('mailing');
         $from = Auth::user()->email;
         if ($mailing == 'for_users') {
-            $mails = User::pluck('email')->all();
+            $mails = User::all()->pluck('email')->all();
             MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
             Log::info('Mailing for users: '.Auth::user()->name);
         } elseif ($mailing == 'for_subscription') {
@@ -176,7 +176,7 @@ class MessageController extends Controller
      */
     public function deleteShows(): RedirectResponse
     {
-        $shows = Message::where('status', 1)->delete();
+        Message::all()->where('status', 1)->delete();
         Log::info('Delete all read messages: '.Auth::user()->name);
 
         return back();

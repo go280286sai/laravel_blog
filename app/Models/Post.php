@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -65,7 +64,7 @@ class Post extends Model
      */
     public static function add($fields): static
     {
-        $post = new static;
+        $post = new self();
         $post->user_id = Auth::user()->id;
         $post->title = $fields['title'];
         $post->description = $fields['description'];
@@ -81,8 +80,8 @@ class Post extends Model
     }
 
     /**
-     * @param array $fields
-     * @param int $id
+     * @param  array  $fields
+     * @param  int  $id
      * @return void
      */
     public function edit(array $fields, int $id): void
@@ -113,7 +112,7 @@ class Post extends Model
     public function removeImage(): void
     {
         if ($this->image != null) {
-            Storage::delete(env('USERS_IMG') . $this->image);
+            Storage::delete(env('USERS_IMG').$this->image);
         }
     }
 
@@ -126,8 +125,8 @@ class Post extends Model
         if ($image == null) {
             return;
         }
-        Storage::delete('uploads/posts/' . $this->image);
-        $filename = Str::random(10) . '.' . $image->extension();
+        Storage::delete('uploads/posts/'.$this->image);
+        $filename = Str::random(10).'.'.$image->extension();
         $image->storeAs('uploads/posts', $filename);
         $this->image = $filename;
         $this->save();
@@ -142,11 +141,11 @@ class Post extends Model
             return '/uploads/posts/no-image.png';
         }
 
-        return '/uploads/posts/' . $this->image;
+        return '/uploads/posts/'.$this->image;
     }
 
     /**
-     * @param int $id
+     * @param  int  $id
      * @return void
      */
     public function setCategory(int $id): void
@@ -170,66 +169,69 @@ class Post extends Model
         $this->tags()->sync($ids);
     }
 
-    /**
-     * @return void
-     */
-    public function setDraft(): void
-    {
-        $this->status = 0;
-        $this->save();
-    }
+//    /**
+//     * @return void
+//     */
+//    public function setDraft(): void
+//    {
+//        $this->status = 0;
+//        $this->save();
+//    }
+
+//    /**
+//     * @return void
+//     */
+//    public function setPublic(): void
+//    {
+//        $this->status = 1;
+//        $this->save();
+//    }
 
     /**
      * @return void
      */
-    public function setPublic(): void
+    public function toggleStatus(): void
     {
+        if ($this->status == 1) {
+            $this->status = 0;
+            $this->save();
+        }
+
         $this->status = 1;
         $this->save();
     }
 
-    /**
-     * @param $value
-     * @return void
-     */
-    public function toggleStatus()
-    {
-        if ($this->status == 1) {
-            return $this->setDraft();
-        }
+//    /**
+//     * @return void
+//     */
+//    public function setFeatured(): void
+//    {
+//        $this->is_featured = 1;
+//        $this->save();
+//    }
 
-        return $this->setPublic();
-    }
-
-    /**
-     * @return void
-     */
-    public function setFeatured(): void
-    {
-        $this->is_featured = 1;
-        $this->save();
-    }
-
-    /**
-     * @return void
-     */
-    public function setStandart(): void
-    {
-        $this->is_featured = 0;
-        $this->save();
-    }
+//    /**
+//     * @return void
+//     */
+//    public function setStandart(): void
+//    {
+//        $this->is_featured = 0;
+//        $this->save();
+//    }
 
     /**
      * @param $value
      * @return void
      */
-    public function toggleFeatured($value)
+    public function toggleFeatured($value): void
     {
         if ($value == null) {
-            return $this->setStandart();
+            $this->is_featured = 0;
+            $this->save();
         }
 
-        return $this->setFeatured();
+        $this->is_featured = 1;
+        $this->save();
     }
 
     /**
@@ -268,7 +270,7 @@ class Post extends Model
      */
     public function getTagsTitles(): string
     {
-        return (!$this->tags->isEmpty())
+        return (! $this->tags->isEmpty())
             ? implode(', ', $this->tags->pluck('title')->all())
             : __('messages.no_tags');
     }
@@ -358,13 +360,14 @@ class Post extends Model
     }
 
     /**
-     * @param string $url Absolute URL to share, e.g. "https://example.com/path/to/article?with=params"
-     * @param string $text Optional comment to share URL with, e.g. "Check out this article!"
+     * @param  string  $url Absolute URL to share, e.g. "https://example.com/path/to/article?with=params"
+     * @param  string  $text Optional comment to share URL with, e.g. "Check out this article!"
      * @return string Button HTML markup, feel free to modify to your taste
      */
     public static function telegramForwardButton(string $url, string $text = ''): string
     {
-        $share_url = 'https://t.me/share/url?url=' . $url . '&text=' . $text;
+        $share_url = 'https://t.me/share/url?url='.$url.'&text='.$text;
+
         return "<a href='{$share_url}'>Share</a>";
     }
 }

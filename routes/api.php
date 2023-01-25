@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/login', '\App\Http\Controllers\Api\AuthController@loginUser');
 Route::post('/register', '\App\Http\Controllers\Api\AuthController@createUser');
-Route:: middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', '\App\Http\Controllers\Api\AuthController@me');
     Route::apiResource('/profile', '\App\Http\Controllers\Api\ProfileController');
     Route::apiResource('/post', '\App\Http\Controllers\Api\PostsController');

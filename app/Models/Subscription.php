@@ -23,10 +23,11 @@ class Subscription extends Model
      */
     public static function add($email): static
     {
-        $sub = new static();
+        $sub = new self();
         $sub->email = $email;
         $sub->token = Str::random(100);
         $sub->save();
+
         return $sub;
     }
 
@@ -44,7 +45,7 @@ class Subscription extends Model
      */
     public static function unscriber($id): mixed
     {
-        $uns = new static();
+        $uns = new self();
 
         return $uns->where('unset', $id)->delete();
     }

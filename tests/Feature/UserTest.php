@@ -3,10 +3,6 @@
 namespace Tests\Feature;
 
 use Database\Factories\UserFactory;
-use Faker\Core\File;
-use Faker\Factory;
-use Faker\Provider\Image;
-use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class UserTest extends TestCase
