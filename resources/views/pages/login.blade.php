@@ -35,12 +35,6 @@
                                                                          placeholder="{{ __('messages.password') }}">
                                 </div>
                             </div>
-                            <div class="block mt-4">
-                                <label for="remember_me" class="inline-flex items-center">
-                                    <input id="remember_me" type="checkbox" name="remember">
-                                    <span class="ml-2 text-sm text-gray-600">{{ __('messages.remember_me') }}</span>
-                                </label>
-                            </div>
                             <div>
                                 @if (Route::has('password.request'))
                                     <a href="{{ route('password.request') }}">

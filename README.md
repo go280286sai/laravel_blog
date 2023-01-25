@@ -243,7 +243,101 @@
     telescope_entries_tags  -->  telescope_entries : entry_uuid:uuid
     users  -->  genders : gender_id:id
 
-## Регистрация через facebook, github
+## Регистрация
+
+Аутентификация в блоге реализована с Laravel Breeze.
+
+    composer require laravel/breeze --dev
+
+![](./storage/read/login.png)
+
+Валидация:
+
+    public function rules()
+    {
+    return [
+    'email' => ['required', 'string', 'email'],
+    'password' => ['required', 'string'],
+    ];
+    }
+
+Аутентификация:
+
+    public function authenticate()
+    {
+    $this->ensureIsNotRateLimited();
+    if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+    RateLimiter::hit($this->throttleKey());
+    throw ValidationException::withMessages([
+    'email' => trans('auth.failed'),
+    ]);
+    }
+    RateLimiter::clear($this->throttleKey());
+    }
+
+## Вход через facebook, github
+С Laravel socialite добавлена возможность входа через Github, Facebook.
+
+SocialController:
+
+    public function githubRedirect()
+    {
+    return Socialite::driver('github')->redirect();
+    }
+
+    public function loginWithGithub()
+    {
+    try {
+    $user = Socialite::driver('github')->user();
+    $isUser = User::where('github_id', $user->id)->first();
+     if ($isUser) {
+    Auth::login($isUser);
+    } else {
+    $createUser = new User();
+    $createUser->name = $user->name;
+    $createUser->email = $user->email;
+    $createUser->github_id = $user->id;
+    $createUser->password = encrypt('user');
+    $createUser->save();
+    Auth::login($createUser);       
+    }       
+    Log::info('Enter with GitHub: '.Auth::user()->name);
+    return redirect('/admin/dashboard');
+    } catch (Exception $exception) {
+    Log::error($exception->getMessage());
+    }
+    }
+
+config/service:
+
+    'github' => [
+    'client_id' => env('GITHUB_CLIENT_ID'),
+    'client_secret' => env('GITHUB_CLIENT_SECRET'),
+    'redirect' => 'http://localhost/auth/github/callback',
+    ]
+
+## Регистрация
+
+![](./storage/read/register.png)
+
+    public function store(Request $request)
+    {
+    $request->validate([
+    'name' => ['required', 'string', 'max:255'],
+    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+    'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
+    
+    $user = User::create([
+    'name' => $request->name,
+    'email' => $request->email,
+    'password' => Hash::make($request->password),
+    ]);
+    event(new Registered($user));
+    Auth::login($user);
+    Log::info('Create new user: '.$user->name);
+    return redirect(RouteServiceProvider::HOME);
+    }
 
 ## Подписка
 
@@ -952,53 +1046,7 @@ https://github.com/kudashevs/laravel-share-buttons
         </ul>
     </div>
 
-## Регистрация
 
-Аутентификация в блоге реализована с Laravel Breeze.
-
-![](./storage/read/login.png)
-
-С Laravel socialite добавлена возможность входа через Github, Facebook.
-
-Controller:
-
-    public function githubRedirect()
-    {
-    return Socialite::driver('github')->redirect();
-    }
-
-    public function loginWithGithub()
-    {
-    try {
-    $user = Socialite::driver('github')->user();
-    $isUser = User::where('github_id', $user->id)->first();
-     if ($isUser) {
-         Auth::login($isUser);
-            } else {
-                $createUser = new User();
-                $createUser->name = $user->name;
-                $createUser->email = $user->email;
-                $createUser->github_id = $user->id;
-                $createUser->password = encrypt('user');
-                $createUser->save();
-                Auth::login($createUser);       
-            }       
-            Log::info('Enter with GitHub: '.Auth::user()->name);
-            return redirect('/admin/dashboard');
-        } catch (Exception $exception) {
-            Log::error($exception->getMessage());
-        }
-    }
-
-config/service:
-
-    'github' => [
-    'client_id' => env('GITHUB_CLIENT_ID'),
-    'client_secret' => env('GITHUB_CLIENT_SECRET'),
-    'redirect' => 'http://localhost/auth/github/callback',
-    ]
-
-регистрация, с пом соц сетей, телескоп, просматривают
 
 ## API with sanctum
 
@@ -1237,4 +1285,50 @@ http://localhost/api/profile method:PUT action:update
     return response()->json(['status' => 'error'])->setStatusCode(400);
     }
     return response()->json(['status' => 'ok']);
+    }
+
+Unit test:
+
+    public function test_authorize()
+    {
+        $response = $this->post('/api/register', ['name' => 'Api_User', 'email' => 'api_user@admin.ua', 'password' => 12345678]);
+    if ($response->getStatusCode() != 200) {
+        $response = $this->post('/api/login', ['email' => 'api_user@admin.ua', 'password' => 12345678]);
+    }
+        $response->assertOk();
+    }
+
+    public function test_category()
+    {
+        $category = $this->get('/api/category');
+        $this->assertEquals(200, $category->status());
+        $this->assertNotEmpty($category);
+    }
+
+    public function test_tags()
+    {
+        $tags = $this->get('/api/category');
+        $tags->assertOk();
+    }
+
+    public function test_profile()
+    {
+
+        Sanctum::actingAs(
+            User::find(1),
+            ['*']
+        );
+        $profile = $this->json('GET', '/api/profile');
+        $profile->assertOk();
+    }
+
+    public function test_post()
+    {
+
+        Sanctum::actingAs(
+            User::find(1),
+            ['*']
+        );
+        $profile = $this->json('GET', '/api/post');
+        $profile->assertOk();
     }
