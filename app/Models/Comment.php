@@ -49,16 +49,18 @@ class Comment extends Model
 //    }
 
     /**
-     * @return void
+     * @return object
      */
-    public function toggleStatus(): void
+    public function toggleStatus(): object
     {
         if ($this->status == 0) {
             $this->status = 1;
             $this->save();
+            return $this;
         }
         $this->status = 0;
         $this->save();
+        return $this;
     }
 
     /**

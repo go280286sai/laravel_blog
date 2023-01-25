@@ -203,16 +203,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * @param $value
-     * @return void
+     * @return object
      */
-    public function toggleBan($value): void
+    public function toggleBan($value): object
     {
         if ($value == 0) {
             $this->status = 1;
             $this->save();
+            return $this;
         }
 
         $this->status = 0;
         $this->save();
+        return $this;
     }
 }
