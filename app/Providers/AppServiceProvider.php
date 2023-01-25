@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 $comments = DB::select('SELECT count(comments.status) as status FROM comments INNER JOIN posts
                                               on comments.post_id=posts.id where posts.deleted_at is NULL
                                               AND comments.deleted_at is null and comments.status=0;');
-                $mail = Message::where('status', '=', 0)->count();
+                $mail = Message::all()->where('status', '=', 0)->count();
 
                 return $view->with(['newCommentsCount' => $comments[0]->status, 'mail_count' => $mail]);
             } else {
