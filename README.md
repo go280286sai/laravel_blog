@@ -243,69 +243,69 @@
     telescope_entries_tags  -->  telescope_entries : entry_uuid:uuid
     users  -->  genders : gender_id:id
 
-## Регистрация
+## Аутентифікація
 
-Аутентификация в блоге реализована с Laravel Breeze.
+Аутентифікація у блозі реалізована з Laravel Breeze.
 
     composer require laravel/breeze --dev
 
 ![](./storage/read/login.png)
 
-Валидация:
+Валідація:
 
     public function rules()
     {
-    return [
-    'email' => ['required', 'string', 'email'],
-    'password' => ['required', 'string'],
+        return [
+        'email' => ['required', 'string', 'email'],
+        'password' => ['required', 'string'],
     ];
     }
 
-Аутентификация:
+Аутентифікація:
 
     public function authenticate()
     {
-    $this->ensureIsNotRateLimited();
+        $this->ensureIsNotRateLimited();
     if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-    RateLimiter::hit($this->throttleKey());
-    throw ValidationException::withMessages([
-    'email' => trans('auth.failed'),
+        RateLimiter::hit($this->throttleKey());
+        throw ValidationException::withMessages([
+        'email' => trans('auth.failed'),
     ]);
     }
-    RateLimiter::clear($this->throttleKey());
+        RateLimiter::clear($this->throttleKey());
     }
 
 ## Вход через facebook, github
-С Laravel socialite добавлена возможность входа через Github, Facebook.
+З Laravel socialite додано можливість входу через Github, Facebook.
 
 SocialController:
 
     public function githubRedirect()
     {
-    return Socialite::driver('github')->redirect();
+        return Socialite::driver('github')->redirect();
     }
 
     public function loginWithGithub()
     {
-    try {
-    $user = Socialite::driver('github')->user();
-    $isUser = User::where('github_id', $user->id)->first();
-     if ($isUser) {
-    Auth::login($isUser);
-    } else {
-    $createUser = new User();
-    $createUser->name = $user->name;
-    $createUser->email = $user->email;
-    $createUser->github_id = $user->id;
-    $createUser->password = encrypt('user');
-    $createUser->save();
-    Auth::login($createUser);       
-    }       
-    Log::info('Enter with GitHub: '.Auth::user()->name);
-    return redirect('/admin/dashboard');
-    } catch (Exception $exception) {
-    Log::error($exception->getMessage());
-    }
+        try {
+            $user = Socialite::driver('github')->user();
+            $isUser = User::where('github_id', $user->id)->first();
+            if ($isUser) {
+            Auth::login($isUser);
+            } else {
+            $createUser = new User();
+            $createUser->name = $user->name;
+            $createUser->email = $user->email;
+            $createUser->github_id = $user->id;
+            $createUser->password = encrypt('user');
+            $createUser->save();
+            Auth::login($createUser);       
+            }       
+            Log::info('Enter with GitHub: '.Auth::user()->name);
+            return redirect('/admin/dashboard');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
     }
 
 config/service:
@@ -316,121 +316,163 @@ config/service:
     'redirect' => 'http://localhost/auth/github/callback',
     ]
 
-## Регистрация
+## Реєстрація
 
 ![](./storage/read/register.png)
 
     public function store(Request $request)
     {
-    $request->validate([
-    'name' => ['required', 'string', 'max:255'],
-    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-    'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    ]);
-    
-    $user = User::create([
-    'name' => $request->name,
-    'email' => $request->email,
-    'password' => Hash::make($request->password),
-    ]);
-    event(new Registered($user));
-    Auth::login($user);
-    Log::info('Create new user: '.$user->name);
-    return redirect(RouteServiceProvider::HOME);
+        $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+         ]);
+        $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        ]);
+        event(new Registered($user));
+        Auth::login($user);
+        Log::info('Create new user: '.$user->name);
+        return redirect(RouteServiceProvider::HOME);
     }
 
-## Подписка
+## Subscribe
 
 ![](./storage/read/subscription.png)
 
-В web добавляем:
+У web додаємо:
 
     Route::post('/subscribe', '\App\Http\Controllers\SubsController@subscribe');
     Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 
-Контроллер SubsController принимает POST запрос, добавляет адресс почты, token в БД
-и отправляет для активации письмо на указанный адрес.
+Контролер SubsController приймає POST запит, додає email пошти, token у БД
+та відправляє для активації листа на вказану адресу.
 
     public function subscribe(SubscribeRequest $request): RedirectResponse
     {
-    $subs = Subscription::add($request->get('email'));
-    Mail::to($subs->email)->send(new SubscribeEmail($subs->token));
-    Log::info('Add subscribe');
-    return redirect()->back()->with('status', __('messages.check_your_mail'));
-        }
+        $subs = Subscription::add($request->get('email'));
+        Mail::to($subs->email)->send(new SubscribeEmail($subs->token));
+        Log::info('Add subscribe');
+        return redirect()->back()->with('status', __('messages.check_your_mail'));
+    }
 
 ![](./storage/read/sub.png)
 
-При нажатии на подтверждение, переходим по GET запросу на    
-Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
+При натисканні на підтвердження переходимо по GET запиту на
+
+    Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
 
     public function verify($token): RedirectResponse
     {
-    $subs = Subscription::all()->where('token', $token)->firstOrFail();
-    $subs->token = null;
-    $subs->unset = Str::random(40);
-    $subs->save();
-    Log::info('Full subscribe');
-    return redirect('/')->with('status', __('messages.your_email_has_been_verified'));
-        }
+        $subs = Subscription::all()->where('token', $token)->firstOrFail();
+        $subs->token = null;
+        $subs->unset = Str::random(40);
+        $subs->save();
+        Log::info('Full subscribe');
+        return redirect('/')->with('status', __('messages.your_email_has_been_verified'));
+    }
 
-Устанавливаем значение token в null, и генерируем еще одно значение unset для возможности отписаться от рассылки.
+Встановлюємо значення token в null і генеруємо ще одне значення unset для можливості відписатися від розсилки.
 
-На вкладке Подписчики у администратора отображается список всех подписчиков и их статус,
-возможность удалить вручную.
+На вкладці Передплатники в адміністратора показує список усіх передплатників та їх статус,
+можливість видалити вручну.
 
     public function destroy(int $id): RedirectResponse
     {
-    Subscription::all()->find($id)->remove();
-    if (Gate::denies('subscription', Subscription::class)) {
-    abort(404);
+        Subscription::all()->find($id)->remove();
+        if (Gate::denies('subscription', Subscription::class)) {
+        abort(404);
     }
-    Log::info('Delete email: '.Auth::user()->name);
-    return redirect('/admin/subscribers');
-        }
+        Log::info('Delete email: '.Auth::user()->name);
+        return redirect('/admin/subscribers');
+    }
 
 ![](./storage/read/sub_2.png)
 
-## Система поиска
+## Поділиться статтею
 
-Реализация с помощью MeiliSearch
+    composer require kudashevs/laravel-share-buttons
 
-Прописываем use Searchable; в тех моделях которые хотим задействовать.
+Створюємо окремо сторінку social.blade.php:
 
-Выполняем импорт модели
+    <div class="social-share">
+        <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
+                class="red">{{$post->getDate()}}</strong> </span>
+        <ul class="text-center pull-right">
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->facebook() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->twitter() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->linkedin() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->telegram() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->whatsapp() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->skype() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->copylink() !!}</li>
+            <li>{!! ShareButtons::page(route('post.show', $post->slug), $post->title)->mailto() !!}</li>
+        </ul>
+    </div>
+
+## Зараз переглядають
+У контролері створюємо масив та перевіряємо користувача при завантаженні, якщо такого ip немає, та змінна
+$slug не існує, то створюємо її й присвоюємо 1, якщо є, то збільшуємо на 1.
+
+    public function show($slug): View
+    {
+        $post = Post::where('slug', $slug)->where('status', 1)->firstOrFail();
+        $ip = [];
+        $post->views += 1;
+        $post->save();
+        $date = Carbon::now()->addMinutes(5);
+        if (Cache::has($slug) && in_array($_SERVER['REMOTE_ADDR'], $ip)) {
+        Cache::increment($slug);
+        $ip[] = $_SERVER['REMOTE_ADDR'];
+        } elseif (!Cache::has($slug)) {
+        Cache::add($slug, 1, $date);
+        $ip[] = $_SERVER['REMOTE_ADDR'];
+    }
+        return view('pages.show', compact('post'));
+    }
+
+## Система пошуку
+
+Реалізація за допомогою MeiliSearch
+
+Прописуємо use Searchable; у тих моделях, які хочемо залучити.
+
+Виконуємо імпорт моделі
 
     php artisan scout:import "App\Models\Post"
 
-На клиентской части поиск выполняется только по статьям:
+На клієнтській частині пошук виконується лише за статтями:
 
     public function index(Request $request): View
     {
-    $search = $request->get('search');
-    $posts = Post::search($search)->get();
-    return view('search.index', ['posts' => $posts]);
-        }
+        $search = $request->get('search');
+        $posts = Post::search($search)->get();
+        return view('search.index', ['posts' => $posts]);
+    }
 
-У администратора поис выполняется по всему содержимому сайта:
+В адміністратора пошук виконується по всьому вмісту сайту:
 
     public function show(Request $request): View
     {
-    $search = $request->get('search');
-    $posts = Post::search($search)->get();
-    if (Auth::user()->is_admin) {
-    $users = User::search($search)->get();
-    $comments = Comment::search($search)->get();
-    $subscriptions = Subscription::search($search)->get();
-    return view('admin.search.index', ['posts' => $posts, 'users' => $users, 'comments' => $comments, 'subs' => $subscriptions, 'i' => 1]);
+        $search = $request->get('search');
+        $posts = Post::search($search)->get();
+        if (Auth::user()->is_admin) {
+        $users = User::search($search)->get();
+        $comments = Comment::search($search)->get();
+        $subscriptions = Subscription::search($search)->get();
+        return view('admin.search.index', ['posts' => $posts, 'users' => $users, 'comments' => $comments, 'subs' => $subscriptions, 'i' => 1]);
     } else {
-    $posts = $posts->where('user_id', '=', Auth::user()->id);
-    return view('admin.search.index', ['posts' => $posts]);
+        $posts = $posts->where('user_id', '=', Auth::user()->id);
+        return view('admin.search.index', ['posts' => $posts]);
     }
-        }
+    }
 
 ## Телеграмм
 
-Отправка сообщения админу через бота.
-Используется "defstudio/telegraph": "^1.28". После установке создаем две БД:
+Надсилання повідомлення адміну через бот.
+Використовується "defstudio/telegraph": "^1.28". Після установки створюємо дві БД:
 
     class telegraph_bots {
     varchar(255) token
@@ -449,120 +491,120 @@ Route::get('/verify/{token}', '\App\Http\Controllers\SubsController@verify');
     bigint unsigned id
     }
 
-где, указываем номер API, номер чата.
+Де вказуємо номер API, номер чату.
 
     public static function getMessages(): mixed
     {
-    $chat = TelegraphBot::find(1);
-    return $chat->updates();
-        }
+        $chat = TelegraphBot::find(1);
+        return $chat->updates();
+    }
 
-Позволяет нам получать сообщения из нашего чата.
+Дозволяє нам отримувати повідомлення з нашого чату.
 
-Получать мы можем автоматически, используюя job:
+Отримувати ми можемо автоматично, використовуючи job:
 
     public function handle()
     {
-    Telegram::add(Chat::getMessages());
+        Telegram::add(Chat::getMessages());
     }
 
-Пропишим в Kernel:
-protected function schedule(Schedule $schedule)
-{
-$schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
-}
+Вкажемо в Kernel:
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->job(TelegramUpdateJob::dispatch()->onQueue('telegram'))->everyThreeHours();
+    }
 
-Или в ручную вызвав на вкладке Telegram функцию обновить:
+Або вручну, викликавши на вкладці Telegram функцію оновити:
 
     public function update(): RedirectResponse
     {
-    Telegram::add(Chat::getMessages());
-    Log::info('Update telegram messages');
-    return redirect()->route('telegram');
-        }
+        Telegram::add(Chat::getMessages());
+        Log::info('Update telegram messages');
+        return redirect()->route('telegram');
+    }
 
-Распарсим наши сообщения и добавим в БД для дальнейшей обработки:
+Обробимо наші повідомлення та додамо до БД для подальшої обробки:
 
     public static function add(object $fields): void
     {
-    $telegram = new static();
-    $last_id = static::latest()->get()[0]->message_id;
-    foreach ($fields as $item) {
-    if ($last_id < $item->message()->id()) {
-    $telegram->update_id = $item->id();
-    $telegram->message_id = $item->message()->id();
-    $telegram->from_id = $item->message()->from()->id();
-    $telegram->first_name = $item->message()->from()->firstname();
-    $telegram->last_name = $item->message()->from()->lastname();
-    $telegram->username = $item->message()->from()->username();
-    $telegram->chat_id = $item->message()->chat()->id();
-    $telegram->send_date = $item->message()->date();
-    $telegram->text = $item->message()->text();
-    $telegram->save();
-    }
-    }
+        $telegram = new static();
+        $last_id = static::latest()->get()[0]->message_id;
+        foreach ($fields as $item) {
+        if ($last_id < $item->message()->id()) {
+        $telegram->update_id = $item->id();
+        $telegram->message_id = $item->message()->id();
+        $telegram->from_id = $item->message()->from()->id();
+        $telegram->first_name = $item->message()->from()->firstname();
+        $telegram->last_name = $item->message()->from()->lastname();
+        $telegram->username = $item->message()->from()->username();
+        $telegram->chat_id = $item->message()->chat()->id();
+        $telegram->send_date = $item->message()->date();
+        $telegram->text = $item->message()->text();
+        $telegram->save();
+            }
+        }
     }
 
-Полученные сообщения отображаются на вкладке Telegram у администратора в виде списка.
-Есть возможность отправить ответ с сохранением его в БД или удалить сообщение.
+Отримані повідомлення показуються на вкладці Telegram в адміністратора у вигляді списку.
+Є можливість надіслати відповідь зі збереженням її до БД або видалити повідомлення.
 
 ![](./storage/read/telegram_1.png)
 
-Также есть группа, с возможностью отправления сообщения, фото, документов.
+Також є група з можливістю надсилання повідомлення, фото, документів.
 
 ![](./storage/read/telegram_2.png)
 
     public function store(Request $request): RedirectResponse
     {
-    if ($request->get('content')) {
-    $content = str_replace(['<p>', '</p>'], '', $request->get('content'));
+        if ($request->get('content')) {
+        $content = str_replace(['<p>', '</p>'], '', $request->get('content'));
     } else {
-    $content = '';
+        $content = '';
     }
     if ($request->get('title')) {
-    $title = $request->get('title');
-    $text = "<b>$title</b>\n $content";
-    Chat::sendMessage($text);
-    Log::info('Send telegram message: '.$title.' - '.$text);
+        $title = $request->get('title');
+        $text = "<b>$title</b>\n $content";
+        Chat::sendMessage($text);
+        Log::info('Send telegram message: '.$title.' - '.$text);
     }
     if ($request->file('photo')) {
-    Chat::sendPhoto($request->file('photo'));
-    Log::info('Send telegram photo');
+        Chat::sendPhoto($request->file('photo'));
+        Log::info('Send telegram photo');
     }
     if ($request->file('doc')) {
-    Chat::sendDocument($request->file('doc'));
-    Log::info('Send telegram document');
+        Chat::sendDocument($request->file('doc'));
+        Log::info('Send telegram document');
     }
-    return redirect()->route('telegram');
-        }
+        return redirect()->route('telegram');
+    }
 
-## Почта
+## Пошта
 
-Вся входящая почта отображается у администратора, пункт email.
+Вся вхідна пошта показується в адміністратора, пункт email.
 
-Количество не прочитанных сообщений
-App>Providers>AppServiceProvider.php>финкция boot
+Кількість не прочитаних повідомлень
+App>Providers>AppServiceProvider.php>функція boot
 
     view()->composer('admin.layouts', function ($view) {
-    if (Auth::user()->is_admin) {
-    $comments = DB::select('SELECT count(comments.status) as status FROM comments INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL AND comments.deleted_at is null and comments.status=0;');
-    $mail = Message::where('status', '=', 0)->count();
-    return $view->with(['newCommentsCount' => $comments[0]->status, 'mail_count' => $mail]);
+        if (Auth::user()->is_admin) {
+        $comments = DB::select('SELECT count(comments.status) as status FROM comments INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL AND comments.deleted_at is null and comments.status=0;');
+        $mail = Message::where('status', '=', 0)->count();
+        return $view->with(['newCommentsCount' => $comments[0]->status, 'mail_count' => $mail]);
     } 
     });
 
-Загружаются списком, отсортированным по дате и статусу. Новые отображаются розовым цветом.
+Завантажуються списком, відсортованим за датою та статусом. Нові показуються рожевим кольором.
 ![](./storage/read/message_1.png)
-Можно удалить все просмотренные или выборочно.
+Можна видалити всі переглянуті або вибірково.
 
     public function deleteShows(): RedirectResponse
     {
-    $shows = Message::where('status', 1)->delete();
-    Log::info('Delete all read messages: '.Auth::user()->name);
-    return back();
-        }
+        $shows = Message::where('status', 1)->delete();
+        Log::info('Delete all read messages: '.Auth::user()->name);
+        return back();
+    }
 
-С помощью ajax меняем статус сообщения:
+За допомогою ajax змінюємо статус повідомлення:
 
     $.ajax({
     url: "{{env('APP_URL').'/admin/messages/'.$message->id}}",
@@ -573,149 +615,148 @@ App>Providers>AppServiceProvider.php>финкция boot
 
     public function update(Request $request, int $id): RedirectResponse
     {
-    $message = Message::find($id);
-    $message->status = 1;
-    $message->save();
-    Log::info('Message status read: '.$message->title.' '.Auth::user()->name);
-    return back();
-        }
+        $message = Message::find($id);
+        $message->status = 1;
+        $message->save();
+        Log::info('Message status read: '.$message->title.' '.Auth::user()->name);
+        return back();
+    }
 
-В нутри каждого письма есть кнопка для ответа пользователю:
+Усередині кожного листа є кнопка для відповіді користувачу:
 
     public function setAnswer(Request $request): Application|RedirectResponse|Redirector
     {
-    Mail::to($request->email)->cc(Auth::user()->email)->send(new answer_email($request->all()));
-    Log::info('Answer the message: '.$request->email.' '.$request->title.' --'.Auth::user()->name);
-    return redirect('/admin/messages');
-        }
+        Mail::to($request->email)->cc(Auth::user()->email)->send(new answer_email($request->all()));
+        Log::info('Answer the message: '.$request->email.' '.$request->title.' --'.Auth::user()->name);
+        return redirect('/admin/messages');
+    }
 
-## Почтовая рассылка
+## Поштова розсилка
 
-Рассылка выполняется отдельно как для подписчиков так и для пользователей сайта.
+Розсилання здійснюється окремо як для передплатників, так і для користувачів сайту.
 
-Есть возможность просмотра шаблона сообщения для редактирования.
+Можна переглядати шаблон повідомлення для редагування.
 
 ![](./storage/read/message_2.png)
 
     public function sendMailing(Request $request): RedirectResponse
     {
-    $content = $request->get('content');
-    $title = $request->get('title');
-    $mailing = $request->get('mailing');
-    $from = Auth::user()->email;
-    if ($mailing == 'for_users') {
-    $mails = User::pluck('email')->all();
-    MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
-    Log::info('Mailing for users: '.Auth::user()->name);
-    } elseif ($mailing == 'for_subscription') {
-    $mails = Subscription::where('unset', '!=', 'null')->pluck('unset', 'email')->toArray();
-    MailingSubJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
-    Log::info('Mailing for subscription: '.Auth::user()->name);
+        $content = $request->get('content');
+        $title = $request->get('title');
+        $mailing = $request->get('mailing');
+        $from = Auth::user()->email;
+        if ($mailing == 'for_users') {
+        $mails = User::pluck('email')->all();
+        MailingJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
+        Log::info('Mailing for users: '.Auth::user()->name);
+        } elseif ($mailing == 'for_subscription') {
+        $mails = Subscription::where('unset', '!=', 'null')->pluck('unset', 'email')->toArray();
+        MailingSubJob::dispatch($mails, $title, $content, $from)->onQueue('mailing');
+        Log::info('Mailing for subscription: '.Auth::user()->name);
     }
 
-Отправку делаем через MailingJob добавляя в очередь onQueue('mailing'):
+Відправлення робимо через MailingJob, додаючи в чергу onQueue('mailing'):
 
     public function handle()
     {
-    foreach ($this->mails as $mail) {
-    Mail::to($mail)->cc($this->from)->send(new MailingList($this->title, $this->content));
-    }
+        foreach ($this->mails as $mail) {
+        Mail::to($mail)->cc($this->from)->send(new MailingList($this->title, $this->content));
+        }
     }
 
 ![](./storage/read/message_3.png)
 
-При рассылке подписчикам передается в тело письма данные поля unset в виде id.
+При розсилці передплатникам передається у тіло листа дані поля unset як id.
 ![](./storage/read/message_4.png)
 
-Формируем строку для отписки.
+Формуємо рядок для відписки.
 
     public function unsets(Request $request): RedirectResponse
     {
-    if (Subscription::unscriber($request->get('email'))) {
-    Log::info('Unscriber email');
-    return redirect('/')->with('status', __('messages.successfully_unsubscribed'));
-    }
-    Log::info('Error unscriber email');
-    return redirect('/')->with('status', __('messages.you_are_not_subscribed'));
+        if (Subscription::unscriber($request->get('email'))) {
+        Log::info('Unscriber email');
+        return redirect('/')->with('status', __('messages.successfully_unsubscribed'));
         }
+        Log::info('Error unscriber email');
+        return redirect('/')->with('status', __('messages.you_are_not_subscribed'));
+    }
 
-В модели Subscription:
+У моделі Subscription:
 
     public static function unscriber($id): mixed
     {
-    $uns = new static();
-    return $uns->where('unset', $id)->delete();
-        }
+        $uns = new static();
+        return $uns->where('unset', $id)->delete();
+    }
 
 ![](./storage/read/message_5.png)
 
-## Мультиязычность
+## Багатомовність
 
 ![](./storage/read/select_lang.png)
-В Kernel>web добавляем SetLangMiddleware::class
+У Kernel>web додаємо SetLangMiddleware::class
 
     public function handle(Request $request, Closure $next)
     {
-    $lang = Cache::has('lang') ? Cache::get('lang') : 'uk';
-    App::setLocale($lang);
+        $lang = Cache::has('lang') ? Cache::get('lang') : 'uk';
+        App::setLocale($lang);
         return $next($request);
     }
 
-При загрузке сайта выполняется проверка на наличие значения 'lang' из кеша
-и присваивается по умолчанию 'uk'. После чего присвоенное значение устанавливается как локальное.
+Під час завантаження сайту виконується перевірка на наявність значення 'lang' з кешу
+і надається за замовчуванням 'uk'. Після чого надане значення встановлюється як локальне.
 
-Добавляем route:
+Додаємо route:
 
-        Route::get('/greeting/{locale}', function ($locale) {
+    Route::get('/greeting/{locale}', function ($locale) {
         if (! in_array($locale, ['en', 'ru', 'uk'])) {
         abort(400);
         }
         Cache::put('lang', $locale, 1000);
         return back();
-        });
+    });    
 
-При смене языка проискодит проверка наличия в допустимых и заносится новое значение в
+При зміні мови відбувається перевірка наявності в допустимих і заноситься нове значення
 кеш.
 
 Unit test
 
     public function test_lang_user()
     {
-    $this->get('/greeting/uk');
-    $this->assertEquals('uk', Cache::get('lang'));
-    $this->get('/greeting/ru');
-    $this->assertEquals('ru', Cache::get('lang'));
-    $this->get('/greeting/en');
-    $this->assertEquals('en', Cache::get('lang'));
-    $response = $this->get('/greeting/fr');
-    $this->assertEquals(400, $response->getStatusCode());
-    }
+        $this->get('/greeting/uk');
+        $this->assertEquals('uk', Cache::get('lang'));
+        $this->get('/greeting/ru');
+        $this->assertEquals('ru', Cache::get('lang'));
+        $this->get('/greeting/en');
+        $this->assertEquals('en', Cache::get('lang'));
+        $response = $this->get('/greeting/fr');
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
-## Комментарии
+## Коментарі
 
-Отображаются как у пользователя так и у администратора.
+Показуються як у користувача, так і адміністратора.
 
     public function index(): View
     {
-    if (Auth::user()->is_admin) {
-    $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
-    INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL
-    AND comments.deleted_at is null order by comments.status;');
-    } else {
-    $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
-    INNER JOIN posts on comments.post_id=posts.id where posts.user_id=? and posts.deleted_at is NULL
-    AND comments.deleted_at is null
-    order by comments.status;', [Auth::user()->id]);
-    }
-    if (Gate::denies('comment', $comments)) {
-    abort(404);
-    }
-    return view('admin.comments.index', ['comments' => $comments, 'i' => 1]);
+        if (Auth::user()->is_admin) {
+            $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
+            INNER JOIN posts on comments.post_id=posts.id where posts.deleted_at is NULL
+            AND comments.deleted_at is null order by comments.status;');
+        } else {
+            $comments = DB::select('SELECT comments.id, text, title, comments.status FROM comments
+            INNER JOIN posts on comments.post_id=posts.id where posts.user_id=? and posts.deleted_at is NULL
+            AND comments.deleted_at is null
+            order by comments.status;', [Auth::user()->id]);
         }
+        if (Gate::denies('comment', $comments)) {
+            abort(404);
+        }
+            return view('admin.comments.index', ['comments' => $comments, 'i' => 1]);
+}
 
-Администратор может утверждать, удалять или восстанавливать все комментарии блога,
-а пользователь утверждать или удалять только те, которые относятся к его статье.
+Адміністратор може стверджувати, видаляти чи відновлювати всі коментарі блогу,
+а користувач затверджує або видаляти лише ті, що належать до його статті.
 
 ![](./storage/read/comment_1.png)
 
@@ -746,58 +787,58 @@ Unit test:
 
     public function test_comments()
     {
-    $comment=CommentFactory::new()->make();
-    $this->assertEquals(0, $comment->status);
-    $comment->toggleStatus();
-    $this->assertEquals(1, $comment->status);
-    $comment->toggleStatus();
-    $this->assertEquals(0, $comment->status);
+        $comment=CommentFactory::new()->make();
+        $this->assertEquals(0, $comment->status);
+        $comment->toggleStatus();
+        $this->assertEquals(1, $comment->status);
+        $comment->toggleStatus();
+        $this->assertEquals(0, $comment->status);
     }
 
-## Пользователи
+## Користувачі
 
-После регистрации пользователя, нужно подтвердить email. Иначе дальнейшая работа будет
-только в ограниченной режиме. Возможность публикации статьи будет временно отключена.
+Після реєстрації користувача потрібно підтвердити email. Інакше подальша робота буде
+лише в обмеженому режимі. Можливість публікації статті буде тимчасово вимкнено.
 
-Возможность изменить свои контактные данные есть во вкладке Профиль.
+Можливість змінити свої контактні дані є у вкладці Профіль.
 
-У администратора отображаются все пользователи блога в виде списка.
+В адміністратора є всі користувачі блогу у вигляді списку.
 ![](./storage/read/user_1.png)
 
-Через middleware реализована возможность просмотра кто онлайн:
+Через middleware реалізована можливість перегляду хто онлайн:
 
     public function handle(Request $request, Closure $next)
     {
-    if (Auth::check()) {
-    $data = Carbon::now()->addMinutes(5);
-    Cache::add(Auth::user()->id, Auth::user()->id, $data);
-    }
-    return $next($request);
+        if (Auth::check()) {
+            $data = Carbon::now()->addMinutes(5);
+            Cache::add(Auth::user()->id, Auth::user()->id, $data);
         }
+        return $next($request);
+    }
 
-Отправка письма пользователю:
+Надсилання листа користувачеві:
 
     public function sendMailUser(Request $request): RedirectResponse
     {
-    Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
-    Log::info('Send email user: '.$request->email.' '.$request->get('content').' --'.Auth::user()->name);
-    return redirect()->route('users.index');
-        }
+        Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
+        Log::info('Send email user: '.$request->email.' '.$request->get('content').' --'.Auth::user()->name);
+        return redirect()->route('users.index');
+    }
 
-Записать комментарий для себя о пользователе:
+Записати коментар для себе про користувача:
 
     public function addCommentUser(Request $request): RedirectResponse
     {
-    $id = $request->get('id');
-    $content = $request->get('content');
-    $user = User::find($id);
-    $user->comment = $content;
-    $user->save();
-    Log::info('Create comment user: '.$user->name.' '.$content.' --'.Auth::user()->name);
-    return redirect()->route('users.index');
-        }
+        $id = $request->get('id');
+        $content = $request->get('content');
+        $user = User::find($id);
+        $user->comment = $content;
+        $user->save();
+        Log::info('Create comment user: '.$user->name.' '.$content.' --'.Auth::user()->name);
+        return redirect()->route('users.index');
+    }
 
-Временно заблокировать пользователя:
+Тимчасово заблокувати користувача:
 
     public function ban(): void
     {
@@ -823,43 +864,42 @@ Unit test:
 
     public function test_user()
     {
-    $user = UserFactory::new()->make();
-    $user->gender_id = 0;
-    $user->name = 'Test';
-    $user->birthday = '2001-01-01';
-    $user->phone = 12345678;
-    $user->myself = 'This is test';
-    $this->assertEquals(0, $user->gender);
-    $this->assertEquals('Test', $user->name);
-    $this->assertEquals('2001-01-01', $user->birthday);
-    $this->assertEquals('12345678', $user->phone);
-    $this->assertEquals('This is test', $user->myself);
-    $password = $user->password;
-    $user->generatePassword('0000');
-    $this->assertNotEquals($password, $user->password);
-    $user->toggleBan($user->status);
-    $this->assertEquals('0', $user->status);
-    $user->toggleBan($user->status);
-    $this->assertEquals('1', $user->status);
+        $user = UserFactory::new()->make();
+        $user->gender_id = 0;
+        $user->name = 'Test';
+        $user->birthday = '2001-01-01';
+        $user->phone = 12345678;
+        $user->myself = 'This is test';
+        $this->assertEquals(0, $user->gender);
+        $this->assertEquals('Test', $user->name);
+        $this->assertEquals('2001-01-01', $user->birthday);
+        $this->assertEquals('12345678', $user->phone);
+        $this->assertEquals('This is test', $user->myself);
+        $password = $user->password;
+        $user->generatePassword('0000');
+        $this->assertNotEquals($password, $user->password);
+        $user->toggleBan($user->status);
+        $this->assertEquals('0', $user->status);
+        $user->toggleBan($user->status);
+        $this->assertEquals('1', $user->status);
     }
 
-## Безопасное удаление
+## Безпечне видалення
 
-Добавляем в миграцию поле **$table->softDeletes()** для users, comments, subscriptions, posts.
+Додаємо до міграції поле **$table->softDeletes()** для users, comments, subscriptions, posts.
 
-В моделях дописываем **use SoftDeletes;**
+У моделях дописуємо **use SoftDeletes;**
 
-Администратор может воccтановить удаленные записи или удалить их окончательно.
-
+Адміністратор може відновити видалені записи або видалити їх остаточно.
 ![](./storage/read/soft_delete_1.png)
 
     public function recover(Request $request)
     {
-    $target = $request->get('target');
-    if ($target == 'trash') {
-    $id = $request->get('id');
-    $this->getTrash($id);
-    Log::info('Trash user: '.$id.' --'.Auth::user()->name);
+        $target = $request->get('target');
+        if ($target == 'trash') {
+        $id = $request->get('id');
+        $this->getTrash($id);
+        Log::info('Trash user: '.$id.' --'.Auth::user()->name);
             return redirect()->route('users_trash');
         } elseif ($target == 'recover') {
             $id = $request->get('id');
@@ -889,7 +929,6 @@ Unit test:
     public function trash(Request $request): View
     {
         $trash = User::onlyTrashed()->get();
-
         return view('admin.users.trash', ['trash' => $trash]);
     }
 
@@ -917,11 +956,11 @@ Unit test:
         });
     }
 
-При удалении пользователя удаляются посты этого пользователя и комментарии которые оставлены под этими постами.
+При видаленні користувача видаляються пости цього користувача та коментарі, які залишені під цими постами.
 
-Также при востановлении пользователя, восстанавливаются посты и комментарии тоже.
+Також при відновленні користувача, відновлюються пости та коментарі теж.
 
-Отдельно можно удалять посты и комментарии.
+Окремо можна видаляти пости та коментарі.
 
     public function getRecover($id): void
     {
@@ -939,12 +978,12 @@ Unit test:
         });
     }
 
-## Посты
+## Пости
 
 ![](./storage/read/post_2.png)
 
-Пост изначально создается в статусе черновика, с возможность указать дату публикации поста.
-После чего можно активировать(при подтверждении email) его или деактивировать.
+Пост спочатку створюється у статусі чернетки, із зазначенням дати публікації посту.
+Після цього можна активувати (при підтвердженні email) його або деактивувати.
 
     public function setDraft(): void
     {
@@ -967,14 +1006,14 @@ Unit test:
         return $this->setPublic();
     }
 
-Администратор имеет полный список всех постов в блоге.
+Адміністратор має повний список усіх постів у блозі.
 ![](./storage/read/post_1.png)
 
-Может создать или восстановить пост, который был удален или удалить навсегда.
+Може створити або відновити пост, який видалено або видалити назавжди.
 
-Может активировать или деактивировать пост.
+Може активувати або деактивувати пост.
 
-Написать комментарий к посту:
+Написати коментар до посту:
 
     public function addCommentPost(Request $request): RedirectResponse
     {
@@ -985,43 +1024,45 @@ Unit test:
         $post->save();
         Log::info('Add comment: '.$post->title.' '.$post->comment.' --'.Auth::user()->name);
             return redirect()->route('posts.index');
-        }
+    }
 
-Отправить письмо автору поста:
+Надіслати листа автору поста:
 
     public function sendMailPost(Request $request): RedirectResponse
     {
         Mail::to($request->email)->cc(Auth::user()->email)->send(new SendMessageEmail($request->all()));
         Log::info('Send mail: '.$request->get('email').' '.$request->get('title').' --'.Auth::user()->name);
         return redirect()->route('posts.index');
-        }
+    }
 
-Имеется счетчик просмотров поста:
+Є лічильник переглядів посту:
 
     $post->views += 1;
 
-Изменть содержимое статьи может только автор:
+Змінити вміст статті може лише автор:
 
-    PostPolicy
+PostPolicy
+
     public function update(User $user, Post $post): bool
     {
-    return $user->id === $post->user_id ? true : abort(403);
+        return $user->id === $post->user_id ? true : abort(403);
     }
 
-    PostController
+PostController
+
     public function update(PostRequest $request, int $id): RedirectResponse
     {
-    $post = Post::all()->find($id);
-    $this->authorize('update', $post);
-    $post->edit($request->all());
-    $post->uploadImage($request->file('image'));
-    $post->setCategory($request->get('category_id'));
-    $post->setTags($request->get('tags'));
-    $post->toggleStatus($request->get('status'));
-    $post->toggleFeatured($request->get('is_featured'));
-    Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
-    return redirect()->route('posts.index');
-        }
+        $post = Post::all()->find($id);
+        $this->authorize('update', $post);
+        $post->edit($request->all());
+        $post->uploadImage($request->file('image'));
+        $post->setCategory($request->get('category_id'));
+        $post->setTags($request->get('tags'));
+        $post->toggleStatus($request->get('status'));
+        $post->toggleFeatured($request->get('is_featured'));
+        Log::info('Update post: '.$request->get('title').' --'.Auth::user()->name);
+        return redirect()->route('posts.index');
+    }
 
 ## Share link
 
@@ -1029,7 +1070,7 @@ Laravel Share Buttons
 
 https://github.com/kudashevs/laravel-share-buttons
 
-Отдельно создан блок кода с возможностью подключения
+Окремо створено блок коду з можливістю підключення
 
     <div class="social-share">
         <span class="social-share-title pull-left text-capitalize">By {{$post->user->name}} On <strong
@@ -1047,10 +1088,9 @@ https://github.com/kudashevs/laravel-share-buttons
     </div>
 
 
-
 ## API with sanctum
 
-Создаем Api\\AuthController:
+Створюємо Api\AuthController:
 
     public function createUser(Request $request)
     {
@@ -1135,7 +1175,7 @@ https://github.com/kudashevs/laravel-share-buttons
 
 ![](./storage/read/api_1.png)
 
-Получаем токен, который можем использовать для запросов:
+Отримуємо токен, який можемо використовувати для запитів:
 
 ![](./storage/read/api_2.png)
 
@@ -1151,8 +1191,8 @@ routes/api:
     Route::get('/category', '\App\Http\Controllers\Api\CategoriesController@index');
     Route::get('/tags', '\App\Http\Controllers\Api\TagsController@index');
 
-В Headers Accept меняем на application/json
-и добавляем Authorization с токеном
+У Headers Accept змінюємо на application/json
+і додаємо Authorization з token
 Authorization Bearer ******************************
 Controllers/Api/PostController:
 
@@ -1160,17 +1200,17 @@ http://localhost/api/post method: GET action:index
 
     public function index(): JsonResponse
     {
-    try {
-    if (Auth::user()->is_admin) {
-    $posts = Post::all();
-    } else {
-    $posts = Post::all()->where('user_id', '=', Auth::user()->id);
-    }
-    } catch (\Exception $e) {
-    Log::info('Show posts: ' . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
-    return response()->json($posts);
+        try {
+        if (Auth::user()->is_admin) {
+            $posts = Post::all();
+        } else {
+            $posts = Post::all()->where('user_id', '=', Auth::user()->id);
+        }
+        } catch (\Exception $e) {
+            Log::info('Show posts: ' . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
+            return response()->json($posts);
     }
 
 http://localhost/api/post/15 method: GET action:show
@@ -1178,55 +1218,55 @@ http://localhost/api/post/15 method: GET action:show
     public function show($id): JsonResponse
     {
     try {
-    if (Auth::user()->is_admin) {
-    $posts = Post::find($id);
+        if (Auth::user()->is_admin) {
+        $posts = Post::find($id);
     } else {
-    $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
+        $posts = Post::find($id)->where('user_id', '=', Auth::user()->id);
     }
     if(!empty($posts)){
-    return response()->json($posts);
+        return response()->json($posts);
     }else throw new \Exception();
     }
     catch (\Exception $e) {
-    Log::info('Show posts: ' . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
+        Log::info('Show posts: ' . ' --' . Auth::user()->name);
+        return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
     }
 
 http://localhost/api/post method: POST action:store
 
     public function store(PostRequest $request): JsonResponse
     {
-    try {
-    $post = Post::add($request->all());
-    $post->uploadImage($request->file('image'));
-    $post->toggleFeatured($request->get('is_featured'));
-    Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
-    return response()->json(['status' => 'ok']);
-    } catch (\Exception $e) {
-    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
+        try {
+            $post = Post::add($request->all());
+            $post->uploadImage($request->file('image'));
+            $post->toggleFeatured($request->get('is_featured'));
+            Log::info('Create post: ' . $request->get('title') . ' ' . Auth::user()->name);
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
     }
 
 http://localhost/api/post/15 method: PUT action:update
 
     public function update(PostRequest $request, $id): JsonResponse
     {
-    try {
-    $post = Post::find($id);
-    if($post->user_id!=Auth::user()->id){
-    throw new \Exception();
-    }
-    $post->edit($request->all(), $id);
-    $post->uploadImage($request->file('image'));
-    $post->toggleFeatured($request->get('is_featured'));
-    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'ok']);
-    } catch (\Exception $e) {
-    Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
+        try {
+            $post = Post::find($id);
+            if($post->user_id!=Auth::user()->id){
+            throw new \Exception();
+        }
+            $post->edit($request->all(), $id);
+            $post->uploadImage($request->file('image'));
+            $post->toggleFeatured($request->get('is_featured'));
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::info('Update post: ' . $request->get('title') . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
     }
 
 http://localhost/api/post_delete/11 method:delete action:destroy
@@ -1234,57 +1274,57 @@ http://localhost/api/post_delete/11 method:delete action:destroy
     public function destroy(int $id)
     {
     try {
-    DB::transaction(function () use ($id) {
-    $post = Post::find($id);
-    if ($post->user_id == Auth::user()->id) {
-    Post::find($id)->remove();
-    Comment::where('post_id', '=', $id)->delete();
-    DB::commit();
-    } else {
-    throw new \Exception('Error');
-    }
-    });
+        DB::transaction(function () use ($id) {
+        $post = Post::find($id);
+        if ($post->user_id == Auth::user()->id) {
+            Post::find($id)->remove();
+            Comment::where('post_id', '=', $id)->delete();
+            DB::commit();
+        } else {
+            throw new \Exception('Error');
+        }
+        });
     } catch (\Exception $e) {
-    Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
+            Log::info('Delete post error: ' . $id . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
+            Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
+            return response()->json(['status' => 'ok']);
     }
-    Log::info('Delete post: ' . $id . ' --' . Auth::user()->name);
-    return response()->json(['status' => 'ok']);
-    }
 
-Делаем проверку, если статья принадлежит данному пользователю то удаляем статью и комментарии к ней.
+Робимо перевірку, якщо стаття належить даному користувачеві, то видаляємо статтю та коментарі до неї.
 
-Если не принадлежит или нет такого id вызываем исключение и возвращаем 400.
+Якщо не належить чи ні такого id викликаємо виняток та повертаємо 400.
 
-Реализуем для Profile
+Реалізуємо для Profile
 
 http://localhost/api/profile method:GET action:index
 
     public function index(): JsonResponse
     {
-    try {
-    $user = Auth::user();
-    Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-    return response()->json($user);
-    }catch (\Exception $e) {
-    Log::info('Api error profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
+        try {
+            $user = Auth::user();
+            Log::info('Api get profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json($user);
+        }catch (\Exception $e) {
+            Log::info('Api error profile: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
     }
 
 http://localhost/api/profile method:PUT action:update
 
     public function update(Request $request): JsonResponse
     {
-    try {
-    $user = Auth::user();
-    User::edit($request->all(), $user->id);
-    Log::info('Api update profile, status ok: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-    }catch (\Exception $e) {
-    Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
-    return response()->json(['status' => 'error'])->setStatusCode(400);
-    }
-    return response()->json(['status' => 'ok']);
+        try {
+            $user = Auth::user();
+            User::edit($request->all(), $user->id);
+            Log::info('Api update profile, status ok: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+        }catch (\Exception $e) {
+            Log::info('Api update profile, status error: ' . $user->id . ' ' . $user->name . ' ' . $user->email);
+            return response()->json(['status' => 'error'])->setStatusCode(400);
+        }
+        return response()->json(['status' => 'ok']);
     }
 
 Unit test:
