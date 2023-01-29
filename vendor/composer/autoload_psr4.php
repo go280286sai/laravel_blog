@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'voku\\' => array($vendorDir . '/voku/portable-ascii/src/voku'),
+    'Worksome\\Envy\\Database\\Factories\\' => array($vendorDir . '/worksome/envy/database/factories'),
+    'Worksome\\Envy\\' => array($vendorDir . '/worksome/envy/src'),
     'Whoops\\' => array($vendorDir . '/filp/whoops/src/Whoops'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'TijsVerkoyen\\CssToInlineStyles\\' => array($vendorDir . '/tijsverkoyen/css-to-inline-styles/src'),
@@ -77,6 +79,7 @@ return array(
     'Laravel\\Sanctum\\' => array($vendorDir . '/laravel/sanctum/src'),
     'Laravel\\Sail\\' => array($vendorDir . '/laravel/sail/src'),
     'Laravel\\Octane\\' => array($vendorDir . '/laravel/octane/src'),
+    'Laravel\\Envoy\\' => array($vendorDir . '/laravel/envoy/src'),
     'Laravel\\Breeze\\' => array($vendorDir . '/laravel/breeze/src'),
     'Laminas\\Diactoros\\' => array($vendorDir . '/laminas/laminas-diactoros/src'),
     'Kudashevs\\ShareButtons\\' => array($vendorDir . '/kudashevs/laravel-share-buttons/src'),
