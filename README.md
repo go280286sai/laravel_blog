@@ -1373,29 +1373,33 @@ Unit test:
         $profile->assertOk();
     }
 
-## PHPStan 
+## PHPStan та перевірка перед зберіганням
 Створюємо файл Pre-commit в .git/hooks/
 
-#!/bin/sh
-CHANGED_FILES_PHP=$(git diff --cached --name-only --diff-filter=ACMR | grep ".php\$" | grep app )
+    #!/bin/sh
 
-if [ -z "$CHANGED_FILES_PHP" ]
-then
-echo "No PHP and VUE files found. No reason to run checks."
-exit 0
-else
-set -e
+    CHANGED_FILES_PHP=$(git diff --cached --name-only --diff-filter=ACMR | grep ".php\$" | grep app )
+    
+    if [ -z "$CHANGED_FILES_PHP" ]
 
-    if [ "$CHANGED_FILES_PHP" ]
     then
-vendor/bin/phpstan analyse app $CHANGED_FILES_PHP
-if [ -z "$CHANGED_FILES_PHP" ]
-then
-black --check $CHANGED_FILES_PHP
-fi
-fi
-fi
-echo "All checks successfully passed."
+
+        echo "No PHP and VUE files found. No reason to run checks."
+
+        exit 0
+
+    else
+        set -e
+        if [ "$CHANGED_FILES_PHP" ]
+        then
+            vendor/bin/phpstan analyse app $CHANGED_FILES_PHP
+            if [ -z "$CHANGED_FILES_PHP" ]
+            then
+                black --check $CHANGED_FILES_PHP
+            fi
+        fi
+    fi
+    echo "All checks successfully passed."
 
 Де app розділ для перевірки файлів.
 
