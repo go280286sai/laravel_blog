@@ -1405,3 +1405,30 @@ Unit test:
 
 Якщо помилок немає то виконається commit, якщо є, то видасть помилки для виправлення.
 
+## Env example
+
+Оновимо env.example автоматично:
+
+Встановимо:
+
+    composer require worksome/envy --dev
+    php artisan envy:install
+
+Після чого виконаємо:
+
+    php artisan envy:sync
+
+## Laravel Envoy 
+После установки Envoy создадим файл внутри корня сайта:
+
+php vendor/bin/envoy init localhost
+
+Внутри файла Envoy.blade.php создадим задачу:
+
+    @servers(['web' => 'localhost'])
+    
+    @task('telescope')
+    php artisan telescope:prune
+    @endtask
+
+php vendor/bin/envoy run telescope
