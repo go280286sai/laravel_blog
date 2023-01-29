@@ -1419,11 +1419,11 @@ Unit test:
     php artisan envy:sync
 
 ## Laravel Envoy 
-После установки Envoy создадим файл внутри корня сайта:
+Після встановлення Envoy створимо файл усередині кореня сайту:
 
 php vendor/bin/envoy init localhost
 
-Внутри файла Envoy.blade.php создадим задачу:
+Усередині файлу Envoy.blade.php створимо завдання:
 
     @servers(['web' => 'localhost'])
     
