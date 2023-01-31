@@ -106,7 +106,7 @@
 
                 </div>
                 <div class="pull-left info">
-                    <p><font color="green">{{$admin->name}}</font></p>{{$admin->email}}
+                    <p class="green">{{$admin->name}}</p>{{$admin->email}}
                 </div>
             </div>
             <!-- search form -->
@@ -142,6 +142,13 @@
                         <i class="fa fa-commenting"></i> <span>{{__('admin.comments')}}</span>
                         <span class="pull-right-container">
               <small class="label pull-right bg-green">{{$newCommentsCount}}</small>
+            </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{env('APP_URL').'/admin/chat/'}}" target="_blank">
+                        <i class="fa fa-support"></i> <span>{{__('admin.chat')}}</span>
+                        <span class="pull-right-container">
             </span>
                     </a>
                 </li>

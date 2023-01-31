@@ -34,7 +34,7 @@ class Telegram extends Model
     }
 
     /**
-     * @param int $id
+     * @param  int  $id
      * @return void
      */
     public static function statusAnswer(int $id): void

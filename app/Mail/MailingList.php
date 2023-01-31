@@ -13,6 +13,7 @@ class MailingList extends Mailable
     use Queueable, SerializesModels;
 
     private string $title;
+
     private string $content;
 
     /**

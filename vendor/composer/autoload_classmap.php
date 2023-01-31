@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Broadcasting\\ChatChennel' => $baseDir . '/app/Broadcasting/ChatChennel.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Helpers\\TelegramClass' => $baseDir . '/app/Helpers/TelegramClass.php',
@@ -79,6 +80,7 @@ return array(
     'App\\Mail\\SendMessageEmail' => $baseDir . '/app/Mail/SendMessageEmail.php',
     'App\\Mail\\SubscribeEmail' => $baseDir . '/app/Mail/SubscribeEmail.php',
     'App\\Mail\\answer_email' => $baseDir . '/app/Mail/answer_email.php',
+    'App\\Models\\Broadcast' => $baseDir . '/app/Models/Broadcast.php',
     'App\\Models\\Category' => $baseDir . '/app/Models/Category.php',
     'App\\Models\\Chat' => $baseDir . '/app/Models/Chat.php',
     'App\\Models\\Comment' => $baseDir . '/app/Models/Comment.php',
@@ -5100,6 +5102,13 @@ return array(
     'Psy\\VersionUpdater\\IntervalChecker' => $vendorDir . '/psy/psysh/src/VersionUpdater/IntervalChecker.php',
     'Psy\\VersionUpdater\\NoopChecker' => $vendorDir . '/psy/psysh/src/VersionUpdater/NoopChecker.php',
     'Psy\\VersionUpdater\\SelfUpdate' => $vendorDir . '/psy/psysh/src/VersionUpdater/SelfUpdate.php',
+    'Pusher\\ApiErrorException' => $vendorDir . '/pusher/pusher-php-server/src/ApiErrorException.php',
+    'Pusher\\Pusher' => $vendorDir . '/pusher/pusher-php-server/src/Pusher.php',
+    'Pusher\\PusherCrypto' => $vendorDir . '/pusher/pusher-php-server/src/PusherCrypto.php',
+    'Pusher\\PusherException' => $vendorDir . '/pusher/pusher-php-server/src/PusherException.php',
+    'Pusher\\PusherInstance' => $vendorDir . '/pusher/pusher-php-server/src/PusherInstance.php',
+    'Pusher\\PusherInterface' => $vendorDir . '/pusher/pusher-php-server/src/PusherInterface.php',
+    'Pusher\\Webhook' => $vendorDir . '/pusher/pusher-php-server/src/Webhook.php',
     'Ramsey\\Collection\\AbstractArray' => $vendorDir . '/ramsey/collection/src/AbstractArray.php',
     'Ramsey\\Collection\\AbstractCollection' => $vendorDir . '/ramsey/collection/src/AbstractCollection.php',
     'Ramsey\\Collection\\AbstractSet' => $vendorDir . '/ramsey/collection/src/AbstractSet.php',

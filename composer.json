@@ -20,7 +20,8 @@
         "laravel/tinker": "^2.7",
         "laravelcollective/html": "^6.3",
         "meilisearch/meilisearch-php": "^0.26.0",
-        "predis/predis": "^2.0"
+        "predis/predis": "^2.0",
+        "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
