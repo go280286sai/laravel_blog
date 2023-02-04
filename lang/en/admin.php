@@ -104,5 +104,5 @@ return [
     'template_mailing' => 'Template for users',
     'template_mailing_sub' => 'Template for subscribers',
     'chat' => 'Chat',
-
+    'add_private_message'=>'Send push message'
 ];

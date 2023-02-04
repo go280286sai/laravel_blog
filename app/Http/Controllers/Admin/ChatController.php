@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSend;
+use App\Events\UserSend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MessageFormRequest;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ChatController extends Controller
@@ -33,5 +35,15 @@ class ChatController extends Controller
         \broadcast(new MessageSend($message));
 
         return true;
+    }
+
+    public function sendUser(Request $request)
+    {
+       $message =strip_tags($request->get('message'));
+       $id = $request->get('id');
+
+        \broadcast(new UserSend($message, $id));
+
+        return redirect('/admin/users');
     }
 }

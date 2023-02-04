@@ -50,12 +50,6 @@
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">
@@ -123,6 +117,13 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu">
+                <div id="admin">
+                    <form action="/admin/chat_send" method="post">
+                        <div class="input-group">
+                            <input type="hidden" name="id" value="{{\Illuminate\Support\Facades\Auth::user()->id}}" id="getId">
+                        </div>
+                    </form>
+                </div>
                 <li class="header">{{__('admin.main_navigation')}}</li>
                 <li class="treeview">
                     <a href="{{env('APP_URL').'/admin/profile/'}}">
@@ -400,6 +401,9 @@
          immediately after the control sidebar -->
     <div class="control-sidebar-bg"></div>
 </div>
+@vite('resources/js/app.js')
+<script src="https://unpkg.com/vue@next"></script>
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 <!-- ./wrapper -->
 <!-- jQuery 2.2.3 -->
 <script src="{{env('APP_URL').'/assets/plugins/jQuery/jquery-2.2.3.min.js'}}"></script>

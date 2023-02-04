@@ -45,6 +45,12 @@
                                     <br>
                                     @if(\Illuminate\Support\Facades\Cache::get($user->id))
                                         <strong class="green">{{__('admin.online')}}</strong>
+                                        <form action="{{env('APP_URL').'/admin/chat_user/'.$user->id}}"
+                                              method="get">
+                                            @csrf
+                                            <button class="btn" title="{{__('admin.add_private_message')}}"><i class="fa fa-send"></i>
+                                            </button>
+                                        </form>
                                     @else
                                         <strong class="red">{{__('admin.offline')}}</strong>
                                     @endif

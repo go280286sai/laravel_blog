@@ -57,7 +57,7 @@ Route::controller(MessageController::class)->group(function () {
 });
 
 Route::get('/greeting/{locale}', function ($locale) {
-    if (! in_array($locale, ['en', 'ru', 'uk'])) {
+    if (!in_array($locale, ['en', 'ru', 'uk'])) {
         abort(400);
     }
     Cache::put('lang', $locale, 1000);
@@ -85,6 +85,7 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthAdminMiddleware::class, 
             Route::get('/toggle/{id}', 'toggle');
             Route::get('/users_trash', 'trash')->name('users_trash');
             Route::post('/users_recover', 'recover');
+            Route::get('/chat_user/{id}', 'chatUser');
         });
 
         Route::controller(PostsController::class)->group(function () {
@@ -129,6 +130,8 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthAdminMiddleware::class, 
         Route::view('/view_mailing_sub', 'emails.mailing_list_sub', ['title' => 'Constructor', 'content' => 'Some text', 'id' => 'test']);
 
         Route::view('/view_mailing', 'emails.mailing_list', ['title' => 'Constructor', 'content' => 'Some text']);
+
+        Route::post('/chat_user_send', [ChatController::class, 'sendUser']);
     });
 
 Route::group(['prefix' => 'admin', 'middleware' => [AuthMiddleware::class, UsersOnlineMiddleware::class]],
@@ -159,4 +162,4 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthMiddleware::class, Users
         });
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

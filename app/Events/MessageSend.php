@@ -4,6 +4,7 @@ namespace App\Events;
 
 use GuzzleHttp\Client;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -31,12 +32,11 @@ class MessageSend implements ShouldBroadcast
         $pusher->trigger('chat', 'my-event', $message);
     }
 
-    /**
-     * @return string[]
-     */
-    public function broadcastOn(): array
+
+    public function broadcastOn()
     {
-        return ['chat'];
+//        return ['chat'];
+      return  new PrivateChannel('chat');
     }
 
     /**
