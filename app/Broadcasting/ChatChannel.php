@@ -5,7 +5,7 @@ namespace App\Broadcasting;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class ChatChennel
+class ChatChannel
 {
     /**
      * Create a new channel instance.

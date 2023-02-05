@@ -6,6 +6,8 @@ use App\Events\MessageSend;
 use App\Events\UserSend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MessageFormRequest;
+use App\Models\Broadcast;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,23 +23,27 @@ class ChatController extends Controller
 
     /**
      * @param  MessageFormRequest  $request
-     * @return bool
+     * @return void
      */
-    public function send(MessageFormRequest $request): bool
+    public function send(MessageFormRequest $request): void
     {
         $message = [
             'message' => $request->get('message'),
             'name' => $request->get('name'),
             'date' => $request->get('date'),
             'avatar' => $request->get('avatar'),
+            'user_id' => $request->get('user_id'),
         ];
 
         \broadcast(new MessageSend($message));
 
-        return true;
     }
 
-    public function sendUser(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function sendUser(Request $request): RedirectResponse
     {
        $message =strip_tags($request->get('message'));
        $id = $request->get('id');
@@ -45,5 +51,22 @@ class ChatController extends Controller
         \broadcast(new UserSend($message, $id));
 
         return redirect('/admin/users');
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function addBroadcast(Request $request): void
+    {
+        Broadcast::addChat($request->all());
+    }
+
+    /**
+     * @return string
+     */
+    public function getBroadcast(): string
+    {
+       return Broadcast::getChat()->toJson();
     }
 }

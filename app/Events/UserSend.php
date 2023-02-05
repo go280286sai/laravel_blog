@@ -35,7 +35,10 @@ class UserSend implements ShouldBroadcast
     }
 
 
-    public function broadcastOn()
+    /**
+     * @return PrivateChannel
+     */
+    public function broadcastOn(): PrivateChannel
     {
 
         return new PrivateChannel('user.' . $this->id);

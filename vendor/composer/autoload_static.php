@@ -794,6 +794,7 @@ class ComposerStaticInitf656fdec000c6c727548a55c10c9bad1
         'App\\Broadcasting\\ChatChennel' => __DIR__ . '/../..' . '/app/Broadcasting/ChatChennel.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Events\\MessageSend' => __DIR__ . '/../..' . '/app/Events/MessageSend.php',
+        'App\\Events\\UserSend' => __DIR__ . '/../..' . '/app/Events/UserSend.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Helpers\\TelegramClass' => __DIR__ . '/../..' . '/app/Helpers/TelegramClass.php',
         'App\\Http\\Controllers\\Admin\\CategoriesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CategoriesController.php',

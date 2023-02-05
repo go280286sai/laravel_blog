@@ -159,6 +159,8 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthMiddleware::class, Users
         Route::controller(ChatController::class)->group(function () {
             Route::get('chat', 'index');
             Route::post('chat_send', 'send');
+            Route::post('chat_add', 'addBroadcast');
+            Route::get('chat_get', 'getBroadcast');
         });
     });
 

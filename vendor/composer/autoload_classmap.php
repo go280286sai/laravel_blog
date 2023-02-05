@@ -9,6 +9,7 @@ return array(
     'App\\Broadcasting\\ChatChennel' => $baseDir . '/app/Broadcasting/ChatChennel.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Events\\MessageSend' => $baseDir . '/app/Events/MessageSend.php',
+    'App\\Events\\UserSend' => $baseDir . '/app/Events/UserSend.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Helpers\\TelegramClass' => $baseDir . '/app/Helpers/TelegramClass.php',
     'App\\Http\\Controllers\\Admin\\CategoriesController' => $baseDir . '/app/Http/Controllers/Admin/CategoriesController.php',

@@ -42,6 +42,7 @@
                                     <input type="hidden" name="avatar" value="{{\Illuminate\Support\Facades\Auth::user()->getAvatar()}}">
                                     <input type="hidden" name="name" value="{{\Illuminate\Support\Facades\Auth::user()->name}}">
                                     <input type="hidden" name="date" value="{{date('d M H:i a')}}">
+                                    <input type="hidden" name="user_id" value="{{\Illuminate\Support\Facades\Auth::id()}}">
                                     <span class="input-group-btn">
                                     <button name="send" @click="sending"
                                             class="btn-warning btn-flat">{{__('admin.send')}}</button>
