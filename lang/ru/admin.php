@@ -103,4 +103,6 @@ return [
     'message_number' => 'Номер сообщения',
     'template_mailing' => 'Шаблон для пользователей',
     'template_mailing_sub' => 'Шаблон для подписчиков',
+    'chat' => 'Чат',
+    'add_private_message'=>'Отправить push-сообщение'
 ];

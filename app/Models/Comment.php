@@ -56,10 +56,12 @@ class Comment extends Model
         if ($this->status == 0) {
             $this->status = 1;
             $this->save();
+
             return $this;
         }
         $this->status = 0;
         $this->save();
+
         return $this;
     }
 

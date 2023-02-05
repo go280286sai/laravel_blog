@@ -77,6 +77,14 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * @return HasMany
      */
+    public function broadcast(): HasMany
+    {
+        return $this->hasMany(Broadcast::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
@@ -110,7 +118,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $user->phone = $fields['phone'] ?? null;
         $user->gender_id = $fields['gender_id'] ?? null;
         $user->myself = $fields['myself'] ?? null;
-        if (!empty($fields['password'])) {
+        if (! empty($fields['password'])) {
             $user->password = bcrypt($fields['password']);
         }
         $user->save();
@@ -145,8 +153,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function uploadAvatar($image): void
     {
         if ($image != null) {
-            Storage::delete('uploads/users' . $this->image);
-            $fileName = Str::random(10) . '.' . $image->extension();
+            Storage::delete('uploads/users'.$this->image);
+            $fileName = Str::random(10).'.'.$image->extension();
             $image->storeAs('uploads/users', $fileName);
             $this->avatar = $fileName;
             $this->save();
@@ -164,7 +172,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return '/uploads/users/no-user-image.png';
         }
 
-        return '/uploads/users/' . $this->avatar;
+        return '/uploads/users/'.$this->avatar;
     }
 //
 //    /**
@@ -200,7 +208,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
-
     /**
      * @param $value
      * @return object
@@ -210,11 +217,13 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($value == 0) {
             $this->status = 1;
             $this->save();
+
             return $this;
         }
 
         $this->status = 0;
         $this->save();
+
         return $this;
     }
 }

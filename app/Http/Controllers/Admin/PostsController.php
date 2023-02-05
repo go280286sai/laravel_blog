@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Helpers\Dto\getObj;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Mail\SendMessageEmail;

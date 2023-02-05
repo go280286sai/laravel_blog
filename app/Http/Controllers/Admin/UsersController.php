@@ -245,4 +245,9 @@ class UsersController extends Controller
             User::onlyTrashed()->where('id', '=', $id)->forceDelete();
         });
     }
+
+    public function chatUser(int $id)
+    {
+        return view('admin.users.channel', ['id'=>$id]);
+    }
 }

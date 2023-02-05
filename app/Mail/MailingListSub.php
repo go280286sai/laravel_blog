@@ -13,7 +13,9 @@ class MailingListSub extends Mailable
     use Queueable, SerializesModels;
 
     private string $title;
+
     private string $content;
+
     private int $id;
 
     /**
