@@ -64,13 +64,4 @@
     <!-- DataTables -->
     <script src="{{env('APP_URL').'/assets/plugins/datatables/jquery.dataTables.min.js'}}"></script>
     <script src="{{env('APP_URL').'/assets/plugins/datatables/dataTables.bootstrap.min.js'}}"></script>
-    <!-- page script -->
-    <script>
-        $(function () {
-            $("#example1").DataTable();
-        });
-        $(document).ready(function () {
-            console.log($('#del_cat'))
-        })
-    </script>
 @endsection

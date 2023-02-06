@@ -34,32 +34,21 @@ class ChatController extends Controller
             'avatar' => $request->get('avatar'),
             'user_id' => $request->get('user_id'),
         ];
-
+        Broadcast::addChat($message);
         \broadcast(new MessageSend($message));
-
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse
      */
     public function sendUser(Request $request): RedirectResponse
     {
-       $message =strip_tags($request->get('message'));
-       $id = $request->get('id');
-
-        \broadcast(new UserSend($message, $id));
+        $message = strip_tags($request->get('message'));
+        $id = $request->get('id');
+        \event(new UserSend($message, $id));
 
         return redirect('/admin/users');
-    }
-
-    /**
-     * @param Request $request
-     * @return void
-     */
-    public function addBroadcast(Request $request): void
-    {
-        Broadcast::addChat($request->all());
     }
 
     /**
@@ -67,6 +56,6 @@ class ChatController extends Controller
      */
     public function getBroadcast(): string
     {
-       return Broadcast::getChat()->toJson();
+        return Broadcast::getChat()->toJson();
     }
 }

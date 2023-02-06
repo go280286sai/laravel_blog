@@ -8,6 +8,7 @@ const id = $('#getId').val();
 const channel = pusher.subscribe(`user.${id}`);
 channel.bind('user-event', function (data) {
     app.message = data;
+    alert(data);
 })
 const app = Vue.createApp({
     data() {

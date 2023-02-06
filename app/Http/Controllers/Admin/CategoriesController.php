@@ -7,6 +7,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -18,7 +19,13 @@ class CategoriesController extends Controller
      */
     public function index(): View
     {
-        $categories = Category::all();
+        if (Cache::has('categories')) {
+            $categories = Cache::get('categories');
+        } else {
+            $categories = Category::all();
+            Cache::add('categories', $categories, 3000);
+        }
+
         if (Gate::denies('category', $categories)) {
             abort(404);
         }

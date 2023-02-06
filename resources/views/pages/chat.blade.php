@@ -2,7 +2,7 @@
 <head>
     <title>Pusher Test</title>
 </head>
-
+<script src="https://unpkg.com/vue@next"></script>
 
 <body>
 <link rel="stylesheet" href="/assets/css/chat.css">
@@ -29,9 +29,8 @@
                     </div>
 
                     <div class="box-body" id="app">
-
                         <div class="direct-chat-messages">
-                                <div  v-for="message in messages" v-html="message">
+                                <div v-for="message in messages" v-html="message">
                             </div>
                         </div>
                         <div class="box-footer">
@@ -61,9 +60,7 @@
 </div>
 
 <script type="text/javascript" src="{{env('APP_URL').'/assets/front/js/jquery-1.11.3.min.js'}}"></script>
-
-@vite('resources/js/app.js')
-<script src="https://unpkg.com/vue@next"></script>
+{{--<script type="text/javascript" src="{{env('APP_URL').'/build/assets/app-8923d62c.js'}}"></script>--}}
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-
+@vite('resources/js/app.js')
 </body>

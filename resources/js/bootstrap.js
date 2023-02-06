@@ -1,5 +1,6 @@
 import _ from 'lodash';
 window._ = _;
+
 import './channels/chat/chat';
 import './channels/users/user';
 

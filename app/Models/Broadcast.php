@@ -27,17 +27,17 @@ class Broadcast extends Model
     public static function getChat()
     {
         $field = self::all();
-        if($field->count()>40){
+        if ($field->count() > 40) {
             self::removeChat();
         }
+
         return $field;
     }
 
     public static function removeChat()
     {
-        for ($i=0;$i<40;$i++){
-           self::all()->first()->delete();
+        for ($i = 0; $i < 40; $i++) {
+            self::all()->first()->delete();
         }
     }
-
 }

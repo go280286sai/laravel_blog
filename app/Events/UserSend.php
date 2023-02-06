@@ -3,11 +3,13 @@
 namespace App\Events;
 
 use GuzzleHttp\Client;
+use Http\Discovery\Exception;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Pusher\Pusher;
 
 class UserSend implements ShouldBroadcast
@@ -18,6 +20,7 @@ class UserSend implements ShouldBroadcast
 
     public function __construct($message, $id)
     {
+
         $this->id = $id;
         $custom_client = new Client();
         $options = [
@@ -31,17 +34,20 @@ class UserSend implements ShouldBroadcast
             $options,
             $custom_client
         );
-        $pusher->trigger('user.' . $id, 'user-event', $message);
+        try {
+            $pusher->trigger('user.'.$id, 'user-event', $message);
+        }
+       catch (\Exception $e){
+           Log::error('UserSend Error: '.$message.' '.$id);
+       }
     }
-
 
     /**
      * @return PrivateChannel
      */
     public function broadcastOn(): PrivateChannel
     {
-
-        return new PrivateChannel('user.' . $this->id);
+        return new PrivateChannel('user.'.$this->id);
     }
 
     /**
@@ -51,5 +57,4 @@ class UserSend implements ShouldBroadcast
     {
         return 'user-event';
     }
-
 }

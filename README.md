@@ -1432,3 +1432,209 @@ php vendor/bin/envoy init localhost
     @endtask
 
 php vendor/bin/envoy run telescope
+
+
+## Загальний чат та персональні push повідомлення WebSockets c Pusher, Vue
+
+https://pusher.com/
+
+
+В routes/channels:
+
+    Broadcast::channel('chat', ChatChannel::class);
+    Broadcast::channel('user.{id}', function ($id) {
+    return Auth::id() == $id;
+    });
+
+Broadcasting/ChatChannel:
+
+    public function join(User $user): bool
+    {
+        return Auth::check();
+    }
+
+Controllers/Admin/ChatController:
+
+Отримуємо дані та відправляємо в бд та створюємо подію:
+
+    public function send(MessageFormRequest $request): void
+    {
+        $message = [
+        'message' => $request->get('message'),
+        'name' => $request->get('name'),
+        'date' => $request->get('date'),
+        'avatar' => $request->get('avatar'),
+        'user_id' => $request->get('user_id'),
+        ];
+        Broadcast::addChat($message);
+        \broadcast(new MessageSend($message));
+    }
+
+Отримуємо повідомлення для надсилання певному користувачеві:
+
+    public function sendUser(Request $request): RedirectResponse
+    {
+        $message = strip_tags($request->get('message'));
+        $id = $request->get('id');
+        \broadcast(new UserSend($message, $id));
+        return redirect('/admin/users');
+    }
+
+Завантажуємо дані з бд:
+
+    public function getBroadcast(): string
+    {
+        return Broadcast::getChat()->toJson();
+    }
+
+Events/MessageSend:
+
+    public function __construct($message)
+    {
+        $custom_client = new Client();
+        $options = [
+        'cluster' => env('PUSHER_APP_CLUSTER'),
+        'useTLS' => false,
+        ];
+        $pusher = new Pusher(
+        env('PUSHER_APP_KEY'),
+        env('PUSHER_APP_SECRET'),
+        env('PUSHER_APP_ID'),
+        $options,
+        $custom_client
+        );
+        $pusher->trigger('chat', 'my-event', $message);
+    }
+
+Створюємо приватний канал:
+
+    public function broadcastOn(): PrivateChannel
+    {
+        return  new PrivateChannel('chat');
+    }
+
+Даємо назву каналу:
+
+    public function broadcastAs(): string
+    {
+        return 'my-event';
+    } 
+
+Events/UserSend:
+
+Створюємо канал повідомлення для кожного користувача по id окремо:
+
+    public function __construct($message, $id)
+    {
+        $this->id = $id;
+        $custom_client = new Client();
+        $options = [
+        'cluster' => env('PUSHER_APP_CLUSTER'),
+        'useTLS' => false,
+        ];
+        $pusher = new Pusher(
+        env('PUSHER_APP_KEY'),
+        env('PUSHER_APP_SECRET'),
+        env('PUSHER_APP_ID'),
+        $options,
+        $custom_client
+        );
+        $pusher->trigger('user.'.$id, 'user-event', $message);
+    }
+
+    public function broadcastOn(): PrivateChannel
+    {
+        return new PrivateChannel('user.'.$this->id);
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'user-event';
+    }
+
+![](./storage/read/push_1.png)
+
+У адміністратора на вкладці користувачі ті, хто знаходиться онлайн, є можливість відправити push
+повідомлення певному користувачеві:
+
+![](./storage/read/push_3.png)
+
+![](./storage/read/push_4.png)
+
+    Pusher.logToConsole = true;
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER
+    });
+    const id = $('#getId').val();
+    const channel = pusher.subscribe(`user.${id}`);
+    channel.bind('user-event', function (data) {
+        app.message = data;
+    })
+    const app = Vue.createApp({
+    data() {
+        return {
+            message: '',
+        }
+    },
+    watch: {
+    message: function () {
+        alert(this.message);
+        }
+    },
+    methods: {
+        send_user(id = 1) {
+            },
+        },
+    }).mount('#admin');
+
+
+    const app = Vue.createApp({
+    data() {
+        return {
+            messages: [],
+        }
+    },
+    methods: {
+        sending(event) {
+        event.preventDefault();
+        let message = $('#formMessage')
+        axios.post(message.attr('action'), message.serialize()).catch(err => {
+        console.log(err)
+        })
+        $('#msg_send').val('')
+    },
+    reading(data) {
+        this.messages.push(`
+        <div class="direct-chat-info clearfix">
+        <span class="direct-chat-name pull-right">${data.name}</span>
+        <span class="direct-chat-timestamp pull-left">${data.date}</span>
+        </div>
+        <img class="direct-chat-img" src="${data.avatar}" alt="message user image">
+        </div>
+        <p class="direct-chat-text">${data.message}</p>`)
+    },
+    }).mount('#app')
+
+    Pusher.logToConsole = true;
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER
+    });
+    if (status === false) {
+        axios.get('/admin/chat_get').then(item => {
+        for (let data of item.data) {
+            app.reading(data)
+        }
+    }).catch(err => {
+        console.log(err)
+    });
+        status = true;
+    }
+
+    const channel = pusher.subscribe('chat');
+    channel.bind('my-event', function (data) {
+        app.reading(data)
+    })
+
+При відкритті чату, завантаження попередніх повідомлень з бд і до них додаються нові.
+
+Якщо повідомлень понад 40, перші 40 видаляються з бд автоматично.

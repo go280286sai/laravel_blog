@@ -57,7 +57,7 @@ Route::controller(MessageController::class)->group(function () {
 });
 
 Route::get('/greeting/{locale}', function ($locale) {
-    if (!in_array($locale, ['en', 'ru', 'uk'])) {
+    if (! in_array($locale, ['en', 'ru', 'uk'])) {
         abort(400);
     }
     Cache::put('lang', $locale, 1000);
@@ -127,7 +127,11 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthAdminMiddleware::class, 
             Route::post('/comments_recover', 'recover');
         });
 
-        Route::view('/view_mailing_sub', 'emails.mailing_list_sub', ['title' => 'Constructor', 'content' => 'Some text', 'id' => 'test']);
+        Route::view('/view_mailing_sub', 'emails.mailing_list_sub', [
+            'title' => 'Constructor',
+            'content' => 'Some text',
+            'id' => 'test',
+        ]);
 
         Route::view('/view_mailing', 'emails.mailing_list', ['title' => 'Constructor', 'content' => 'Some text']);
 
@@ -159,9 +163,8 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthMiddleware::class, Users
         Route::controller(ChatController::class)->group(function () {
             Route::get('chat', 'index');
             Route::post('chat_send', 'send');
-            Route::post('chat_add', 'addBroadcast');
             Route::get('chat_get', 'getBroadcast');
         });
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -14,7 +14,6 @@ class MessageSend implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-
     public function __construct($message)
     {
         $custom_client = new Client();
@@ -32,14 +31,12 @@ class MessageSend implements ShouldBroadcast
         $pusher->trigger('chat', 'my-event', $message);
     }
 
-
     /**
      * @return PrivateChannel
      */
     public function broadcastOn(): PrivateChannel
     {
-
-      return  new PrivateChannel('chat');
+        return  new PrivateChannel('chat');
     }
 
     /**
@@ -49,5 +46,4 @@ class MessageSend implements ShouldBroadcast
     {
         return 'my-event';
     }
-
 }

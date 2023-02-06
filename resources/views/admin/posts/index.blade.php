@@ -126,10 +126,4 @@
 @endsection
 
 @section('js')
-    <!-- page script -->
-    <script>
-        $(function () {
-            $("#example1").DataTable();
-        });
-    </script>
 @endsection

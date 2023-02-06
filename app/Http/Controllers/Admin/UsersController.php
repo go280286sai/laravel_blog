@@ -248,6 +248,6 @@ class UsersController extends Controller
 
     public function chatUser(int $id)
     {
-        return view('admin.users.channel', ['id'=>$id]);
+        return view('admin.users.channel', ['id' => $id]);
     }
 }
