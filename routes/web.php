@@ -146,9 +146,10 @@ Route::group(['prefix' => 'admin', 'middleware' => [AuthMiddleware::class, Users
             Route::get('/comments', 'index');
             Route::get('/comments/toggle/{id}', 'toggle');
             Route::delete('/comments/{id}/destroy', 'destroy')->name('comments.destroy');
-            Route::post('/comment', 'store');
         });
-
+Route::controller(\App\Http\Controllers\CommentsController::class)->group(function (){
+    Route::post('/comment', 'store');
+});
         Route::get('/posts/toggle/{id}', [PostsController::class, 'toggle']);
 
         Route::get('/dashboard', [DashboardController::class, 'index']);

@@ -176,7 +176,7 @@ class MessageController extends Controller
      */
     public function deleteShows(): RedirectResponse
     {
-        Message::all()->where('status', 1)->delete();
+        Message::remove();
         Log::info('Delete all read messages: '.Auth::user()->name);
 
         return back();

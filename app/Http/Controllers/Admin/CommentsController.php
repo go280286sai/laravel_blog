@@ -96,9 +96,9 @@ class CommentsController extends Controller
             return redirect()->route('comments_trash');
         } elseif ($target == 'trash_all') {
             Comment::onlyTrashed()->forceDelete();
-            Log::info('Trash all comments');
+            Log::info('Trash all comments: '.Auth::user()->name);
 
-            return redirect()->route('comments_trash: '.Auth::user()->name);
+            return redirect()->route('comments_trash');
         }
     }
 

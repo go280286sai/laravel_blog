@@ -16,7 +16,13 @@ class Telegram extends Model
     public static function add(object $fields): void
     {
         $telegram = new self();
-        $last_id = static::latest()->get()[0]->message_id;
+        try {
+            $last_id = self::latest()->get()[0]->message_id;
+        }catch (\Exception $e){
+            $last_id=0;
+        }
+
+
         foreach ($fields as $item) {
             if ($last_id < $item->message()->id()) {
                 $telegram->update_id = $item->id();
@@ -39,7 +45,7 @@ class Telegram extends Model
      */
     public static function statusAnswer(int $id): void
     {
-        $telegram = static::find($id);
+        $telegram = self::find($id);
         $telegram->status = 1;
         $telegram->save();
     }
@@ -51,7 +57,7 @@ class Telegram extends Model
      */
     public static function setAnswer(int $id, string $answer): void
     {
-        $telegram = static::find($id);
+        $telegram = self::find($id);
         $telegram->answer = $answer;
         $telegram->save();
     }
@@ -62,6 +68,6 @@ class Telegram extends Model
      */
     public static function remove(int $id): void
     {
-        static::find($id)->delete();
+        self::find($id)->delete();
     }
 }

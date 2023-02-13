@@ -18,7 +18,6 @@ class HomeController extends Controller
     {
         $date = Carbon::now()->format('Y-m-d');
         $posts = Post::where('status', 1)->where('s_date', '<=', $date)->orderByDesc('id')->paginate(2);
-
         return view('pages.index', ['posts' => $posts, 'home' => 'active']);
     }
 

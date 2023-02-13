@@ -21,14 +21,15 @@ class Chat extends BaseModel
     }
 
     /**
-     * @param  object  $image
+     * @param  $image
      * @return void
      */
-    public static function sendPhoto(object $image): void
+    public static function sendPhoto($image): void
     {
         $fileName = Str::random(10).'.'.$image->extension();
         $image->storeAs('uploads/send', $fileName);
         $chat = TelegraphChat::find(1);
+        $chat->html('hello')->send();
         $chat->photo(Storage::path('uploads/send/'.$fileName))->send();
         Storage::delete($fileName);
     }
@@ -51,7 +52,6 @@ class Chat extends BaseModel
     public static function getMessages(): mixed
     {
         $chat = TelegraphBot::find(1);
-
         return $chat->updates();
     }
 

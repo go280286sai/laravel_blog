@@ -169,24 +169,6 @@ class Post extends Model
         $this->tags()->sync($ids);
     }
 
-//    /**
-//     * @return void
-//     */
-//    public function setDraft(): void
-//    {
-//        $this->status = 0;
-//        $this->save();
-//    }
-
-//    /**
-//     * @return void
-//     */
-//    public function setPublic(): void
-//    {
-//        $this->status = 1;
-//        $this->save();
-//    }
-
     /**
      * @return void
      */
@@ -195,29 +177,13 @@ class Post extends Model
         if ($this->status == 1) {
             $this->status = 0;
             $this->save();
+        }else{
+            $this->status = 1;
+            $this->save();
         }
 
-        $this->status = 1;
-        $this->save();
+
     }
-
-//    /**
-//     * @return void
-//     */
-//    public function setFeatured(): void
-//    {
-//        $this->is_featured = 1;
-//        $this->save();
-//    }
-
-//    /**
-//     * @return void
-//     */
-//    public function setStandart(): void
-//    {
-//        $this->is_featured = 0;
-//        $this->save();
-//    }
 
     /**
      * @param $value

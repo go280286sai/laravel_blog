@@ -10,8 +10,7 @@
                 <label>
                     <input type="email" placeholder="{{__('messages.your_email_address')}}" name="email" id="send">
                 </label>
-{{--                <input type="submit" @click="sendSubscribe" value="{{__('messages.subscribe_now')}}"--}}
-                <input type="submit" value="{{__('messages.subscribe_now')}}"
+                <input type="submit" v-on:click="sendSubscribe" value="{{__('messages.subscribe_now')}}"
                        class="text-uppercase text-center btn btn-subscribe">
             </form>
         </aside>
@@ -81,6 +80,7 @@
         </aside>
     </div>
 </div>
+<script src="https://unpkg.com/vue@next"></script>
 <script>
     Vue.createApp({
         data() {

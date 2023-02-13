@@ -118,7 +118,7 @@
                                                       id="write_message"></textarea>
                                     </div>
                                 </div>
-                                <button @click="addComment"
+                                <button v-on:click="addComment"
                                         class="btn send-btn">{{__('messages.post_comment')}}</button>
                             </form>
                         </div>
@@ -150,6 +150,7 @@
 @endsection
 
 @section('js')
+    <script src="https://unpkg.com/vue@next"></script>
     <script>
         Vue.createApp({
             data() {

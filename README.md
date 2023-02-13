@@ -1,3 +1,5 @@
+[![](./storage/read/youtube.png)](https://youtu.be/YWc6EPTSeEU)
+
 ## Blog Laravel
 
         "php": "^8.0.2",

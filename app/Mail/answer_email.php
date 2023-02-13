@@ -12,14 +12,14 @@ class answer_email extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private string $message;
+    private array $message;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(string $message)
+    public function __construct(array $message)
     {
         $this->message = $message;
     }

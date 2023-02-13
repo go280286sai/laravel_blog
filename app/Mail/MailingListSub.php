@@ -16,14 +16,14 @@ class MailingListSub extends Mailable
 
     private string $content;
 
-    private int $id;
+    private string $id;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(string $title, string $content, int $id)
+    public function __construct(string $title, string $content, string $id)
     {
         $this->title = $title;
         $this->content = $content;
